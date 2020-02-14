@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <link rel="stylesheet" href="/res/layui/css/layui.css">
   <link rel="stylesheet" href="/res/css/global.css">
-  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="/res/js/jquery.min.js"></script>
 </head>
 <body>
 <style>
@@ -44,13 +44,14 @@
       </li>
       
       <!-- 登入后的状态 -->
-
       <li class="layui-nav-item login" th:if="${user!=null}">
         <a class="fly-nav-avatar" href="javascript:;">
           <cite class="layui-hide-xs" th:text="${user?.nickname}"></cite>
-          <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>
-          <i class="layui-badge fly-badge-vip layui-hide-xs">VIP</i>
-          <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
+          <i class="iconfont icon-renzheng layui-hide-xs" th:title="'认证信息：'+${user.identity=='会员'}?:'无'"></i>
+          <div th:if="${user.identity=='会员'}">
+            <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="'VIP'+${user.vipGrade}"></i>
+          </div>
+          <img th:src="${user.image} ?:'/res/images/avatar/0.jpg'" th:alt="${user.userName}">
         </a>
         <dl class="layui-nav-child">
           <dd><a href="/userManage/set"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
@@ -84,10 +85,10 @@
     
     <div class="fly-column-right layui-hide-xs"> 
       <span class="fly-search"><i class="layui-icon"></i></span> 
-      <a href="/moduleManage/add" class="layui-btn">发表新帖</a>
+      <a href="/topicManage/toAddTopic" class="layui-btn">发表新帖</a>
     </div> 
     <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;"> 
-      <a href="/moduleManage/add" class="layui-btn">发表新帖</a>
+      <a href="/topicManage/toAddTopic" class="layui-btn">发表新帖</a>
     </div> 
   </div>
 </div>

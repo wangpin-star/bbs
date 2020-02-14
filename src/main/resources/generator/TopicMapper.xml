@@ -17,10 +17,10 @@
     <result column="last_reply_name" jdbcType="VARCHAR" property="lastReplyName" />
     <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
     <result column="topic_state" jdbcType="VARCHAR" property="topicState" />
-    <result column="topic_module" jdbcType="VARCHAR" property="topicModule" />
     <result column="top" jdbcType="INTEGER" property="top" />
     <result column="end" jdbcType="INTEGER" property="end" />
     <result column="essence" jdbcType="INTEGER" property="essence" />
+    <result column="read_num" jdbcType="INTEGER" property="readNum" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--@mbg.generated-->
@@ -85,8 +85,8 @@
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, owner_id, reply_num, last_reply_time, content, title, module_id, create_time, 
-    last_reply_id, owner_name, last_reply_name, module_name, topic_state, topic_module, 
-    `top`, `end`, essence
+    last_reply_id, owner_name, last_reply_name, module_name, topic_state, `top`, `end`, 
+    essence, read_num
   </sql>
   <select id="selectByExample" parameterType="com.wangpin.bbs.topicManage.bean.TopicExample" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -128,14 +128,14 @@
       content, title, module_id, 
       create_time, last_reply_id, owner_name, 
       last_reply_name, module_name, topic_state, 
-      topic_module, `top`, `end`, 
-      essence)
+      `top`, `end`, essence, 
+      read_num)
     values (#{ownerId,jdbcType=INTEGER}, #{replyNum,jdbcType=INTEGER}, #{lastReplyTime,jdbcType=TIMESTAMP}, 
       #{content,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, #{moduleId,jdbcType=INTEGER}, 
       #{createTime,jdbcType=TIMESTAMP}, #{lastReplyId,jdbcType=INTEGER}, #{ownerName,jdbcType=VARCHAR}, 
       #{lastReplyName,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{topicState,jdbcType=VARCHAR}, 
-      #{topicModule,jdbcType=VARCHAR}, #{top,jdbcType=INTEGER}, #{end,jdbcType=INTEGER}, 
-      #{essence,jdbcType=INTEGER})
+      #{top,jdbcType=INTEGER}, #{end,jdbcType=INTEGER}, #{essence,jdbcType=INTEGER}, 
+      #{readNum,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wangpin.bbs.topicManage.bean.Topic" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -177,9 +177,6 @@
       <if test="topicState != null">
         topic_state,
       </if>
-      <if test="topicModule != null">
-        topic_module,
-      </if>
       <if test="top != null">
         `top`,
       </if>
@@ -188,6 +185,9 @@
       </if>
       <if test="essence != null">
         essence,
+      </if>
+      <if test="readNum != null">
+        read_num,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -227,9 +227,6 @@
       <if test="topicState != null">
         #{topicState,jdbcType=VARCHAR},
       </if>
-      <if test="topicModule != null">
-        #{topicModule,jdbcType=VARCHAR},
-      </if>
       <if test="top != null">
         #{top,jdbcType=INTEGER},
       </if>
@@ -238,6 +235,9 @@
       </if>
       <if test="essence != null">
         #{essence,jdbcType=INTEGER},
+      </if>
+      <if test="readNum != null">
+        #{readNum,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -291,9 +291,6 @@
       <if test="record.topicState != null">
         topic_state = #{record.topicState,jdbcType=VARCHAR},
       </if>
-      <if test="record.topicModule != null">
-        topic_module = #{record.topicModule,jdbcType=VARCHAR},
-      </if>
       <if test="record.top != null">
         `top` = #{record.top,jdbcType=INTEGER},
       </if>
@@ -302,6 +299,9 @@
       </if>
       <if test="record.essence != null">
         essence = #{record.essence,jdbcType=INTEGER},
+      </if>
+      <if test="record.readNum != null">
+        read_num = #{record.readNum,jdbcType=INTEGER},
       </if>
     </set>
     <if test="_parameter != null">
@@ -324,10 +324,10 @@
       last_reply_name = #{record.lastReplyName,jdbcType=VARCHAR},
       module_name = #{record.moduleName,jdbcType=VARCHAR},
       topic_state = #{record.topicState,jdbcType=VARCHAR},
-      topic_module = #{record.topicModule,jdbcType=VARCHAR},
       `top` = #{record.top,jdbcType=INTEGER},
       `end` = #{record.end,jdbcType=INTEGER},
-      essence = #{record.essence,jdbcType=INTEGER}
+      essence = #{record.essence,jdbcType=INTEGER},
+      read_num = #{record.readNum,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -372,9 +372,6 @@
       <if test="topicState != null">
         topic_state = #{topicState,jdbcType=VARCHAR},
       </if>
-      <if test="topicModule != null">
-        topic_module = #{topicModule,jdbcType=VARCHAR},
-      </if>
       <if test="top != null">
         `top` = #{top,jdbcType=INTEGER},
       </if>
@@ -383,6 +380,9 @@
       </if>
       <if test="essence != null">
         essence = #{essence,jdbcType=INTEGER},
+      </if>
+      <if test="readNum != null">
+        read_num = #{readNum,jdbcType=INTEGER},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -402,10 +402,29 @@
       last_reply_name = #{lastReplyName,jdbcType=VARCHAR},
       module_name = #{moduleName,jdbcType=VARCHAR},
       topic_state = #{topicState,jdbcType=VARCHAR},
-      topic_module = #{topicModule,jdbcType=VARCHAR},
       `top` = #{top,jdbcType=INTEGER},
       `end` = #{end,jdbcType=INTEGER},
-      essence = #{essence,jdbcType=INTEGER}
+      essence = #{essence,jdbcType=INTEGER},
+      read_num = #{readNum,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <!-- 根据提供的板块名，帖子名查询 -->
+  <select id="selectByModuleNameOrTopicState" resultType="String" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM topic
+    <where>
+      id >=(select id from topic limit #{offset}, 1)
+      <if test="moduleName !=null ">
+        AND module_name= #{moduleName, jdbcType=CHAR}
+      </if >
+      <if test="end!= null ">
+        AND topic.end = #{end, jdbcType=INTEGER}
+      </if >
+      <if test="essence!= null ">
+        AND essence= #{end, jdbcType=INTEGER}
+      </if >
+    </where>
+    limit 2
+  </select>
 </mapper>

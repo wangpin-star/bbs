@@ -1,6 +1,6 @@
 ﻿/**
 
- @Name: Fly社区主入口
+ @Name: java社区主入口
 
  */
  
@@ -20,7 +20,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   
   //阻止IE7以下访问
   if(device.ie && device.ie < 8){
-    layer.alert('如果您非得使用 IE 浏览器访问Fly社区，那么请使用 IE8+');
+    layer.alert('如果您非得使用 IE 浏览器访问java社区，那么请使用 IE8+');
   }
   
   layui.focusInsert = function(obj, str){
@@ -231,6 +231,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       
       layui.use('face', function(face){
         options = options || {};
+        fly
         fly.faces = face;
         $(options.elem).each(function(index){
           var that = this, othis = $(that), parent = othis.parent();
@@ -368,10 +369,10 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       ,shade: 0.8
       ,shadeClose: true
       ,content: ['<div class="layui-text" style="padding: 20px;">'
-        ,'<blockquote class="layui-elem-quote">“签到”可获得社区飞吻，规则如下</blockquote>'
+        ,'<blockquote class="layui-elem-quote">“签到”可获得金币，规则如下</blockquote>'
         ,'<table class="layui-table">'
           ,'<thead>'
-            ,'<tr><th>连续签到天数</th><th>每天可获飞吻</th></tr>'
+            ,'<tr><th>连续签到天数</th><th>每天可获金币</th></tr>'
           ,'</thead>'
           ,'<tbody>'
             ,'<tr><td>＜5</td><td>5</td></tr>'
@@ -474,65 +475,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     */
   };
 
-  //相册
-  if($(window).width() > 750){
-    layer.photos({
-      photos: '.photos'
-      ,zIndex: 9999999999
-      ,anim: -1
-    });
-  } else {
-    $('body').on('click', '.photos img', function(){
-      window.open(this.src);
-    });
-  }
-
-
-  //搜索
-  $('.fly-search').on('click', function(){
-    layer.open({
-      type: 1
-      ,title: false
-      ,closeBtn: false
-      //,shade: [0.1, '#fff']
-      ,shadeClose: true
-      ,maxWidth: 10000
-      ,skin: 'fly-layer-search'
-      ,content: ['<form action="http://cn.bing.com/search">'
-        ,'<input autocomplete="off" placeholder="搜索内容，回车跳转" type="text" name="q">'
-      ,'</form>'].join('')
-      ,success: function(layero){
-        var input = layero.find('input');
-        input.focus();
-
-        layero.find('form').submit(function(){
-          var val = input.val();
-          if(val.replace(/\s/g, '') === ''){
-            return false;
-          }
-          input.val('site:layui.com '+ input.val());
-      });
-      }
-    })
-  });
-
-  //新消息通知
-  fly.newmsg();
-
-  //发送激活邮件
-  fly.activate = function(email){
-    fly.json('/api/activate/', {}, function(res){
-      if(res.status === 0){
-        layer.alert('已成功将激活链接发送到了您的邮箱，接受可能会稍有延迟，请注意查收。', {
-          icon: 1
-        });
-      };
-    });
-  };
-  $('#LAY-activate').on('click', function(){
-    fly.activate($(this).attr('email'));
-  });
-
   //点击@
   $('body').on('click', '.fly-aite', function(){
     var othis = $(this), text = othis.text();
@@ -544,28 +486,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
       href: '/jump?username='+ text
       ,target: '_blank'
     });
-  });
-
-  //表单提交
-  form.on('submit(*)', function(data){
-    var action = $(data.form).attr('action'), button = $(data.elem);
-    fly.json(action, data.field, function(res){
-      var end = function(){
-        if(res.action){
-          location.href = res.action;
-        } else {
-          fly.form[action||button.attr('key')](data.field, data.form);
-        }
-      };
-      if(res.status == 0){
-        button.attr('alert') ? layer.alert(res.msg, {
-          icon: 1,
-          time: 10*1000,
-          end: end
-        }) : end();
-      };
-    });
-    return false;
   });
 
   //加载特定模块
@@ -597,14 +517,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   shadeMobile.on('click', function(){
     $('body').removeClass('site-mobile');
   });
-
-  //获取统计数据
-  $('.fly-handles').each(function(){
-    var othis = $(this);
-    $.get('/api/handle?alias='+ othis.data('alias'), function(res){
-      othis.html('（下载量：'+ res.number +'）');
-    })
-  });
   
   //固定Bar
   util.fixbar({
@@ -613,7 +525,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     ,click: function(type){
       if(type === 'bar1'){
         layer.msg('打开 index.js，开启发表新帖的路径');
-        //location.href = 'jie/add.html';
+        location.href = '/topicManage/toAddTopic';
       }
     }
   });

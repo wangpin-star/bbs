@@ -9,11 +9,12 @@
   <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
   <link rel="stylesheet" href="/res/layui/css/layui.css">
   <link rel="stylesheet" href="/res/css/global.css">
+  <script src="/res/js/jquery.min.js"></script>
 </head>
 <body style="margin-top: 65px;">
 <style>
   .bg{
-    background: url(/res/images/userBackgroundImg/default.jpg) no-repeat;
+    background: url(/static/res/images/userImg/default.jpg) no-repeat;
     background-size: cover;
     position: relative;
   }
@@ -30,18 +31,14 @@
     background:rgba(255,255,255,0.3);
   }
 </style>
-<div class="bg">
   <div class="fly-header layui-bg-black">
     <div class="layui-container">
       <a class="fly-logo" href="/">
-        <img src="../../res/images/logo.png" alt="layui">
+        <img src="/res/images/logo.png" alt="layui">
       </a>
       <ul class="layui-nav fly-nav layui-hide-xs">
         <li class="layui-nav-item layui-this">
           <a href="/"><i class="iconfont icon-jiaoliu"></i>交流</a>
-        </li>
-        <li class="layui-nav-item">
-          <a href="../case/case.html"><i class="iconfont icon-iconmingxinganli"></i>案例</a>
         </li>
         <li class="layui-nav-item">
           <a href="http://www.layui.com/" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
@@ -50,13 +47,14 @@
 
       <ul class="layui-nav fly-nav-user">
         <!-- 登入后的状态 -->
-
         <li class="layui-nav-item login" th:if="${user!=null}">
           <a class="fly-nav-avatar" href="javascript:;">
             <cite class="layui-hide-xs" th:text="${user?.nickname}"></cite>
-            <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：普通会员"></i>
-            <i class="layui-badge fly-badge-vip layui-hide-xs">VIP</i>
-            <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
+            <i class="iconfont icon-renzheng layui-hide-xs" th:title="'认证信息：'+${user.identity=='会员'}?:'无'"></i>
+            <div th:if="${user.identity=='会员'}">
+              <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="'VIP'+${user.vipGrade}"></i>
+            </div>
+            <img th:src="${user.image} ?:'/res/images/avatar/0.jpg'" th:alt="${user.userName}">
           </a>
           <dl class="layui-nav-child">
             <dd><a href="/userManage/set"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
@@ -66,18 +64,21 @@
             <dd><a href="/userManage/logout/" style="text-align: center;">退出</a></dd>
           </dl>
         </li>
+
       </ul>
     </div>
   </div>
-
+<div class="bg">
   <div class="fly-home fly-panel">
-    <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" alt="贤心">
-    <i class="iconfont icon-renzheng" title="Fly社区认证"></i>
+    <img th:src="${user.image} ?:'/res/images/avatar/0.jpg'" th:alt="${user.userName}" style="margin-left: 5px;">
+    <i class="iconfont icon-renzheng" title="java社区认证" th:if="${user.identity=='会员'}"></i>
     <h1>
-      贤心
-      <i class="iconfont icon-nan"></i>
+      <p th:text="${user.userName}"></p>
+      <i th:class="${user.sex==0}?'iconfont icon-nan':'iconfont icon-nv'"></i>
       <!-- <i class="iconfont icon-nv"></i>  -->
-      <i class="layui-badge fly-badge-vip">VIP3</i>
+      <div th:if="${user.identity=='会员'}">
+        <i class="layui-badge fly-badge-vip" th:text="'VIP'+${user.vipGrade}"></i>
+      </div>
       <!--
       <span style="color:#c00;">（管理员）</span>
       <span style="color:#5FB878;">（社区之光）</span>
@@ -85,15 +86,15 @@
       -->
     </h1>
 
-    <p style="padding: 10px 0; color: #5FB878;">认证信息：普通用户</p>
+    <p style="padding: 10px 0; color: #5FB878;" th:text="'认证信息: '+${user.identity}"></p>
 
     <p class="fly-home-info">
-      <i class="iconfont icon-kiss" title="飞吻"></i><span style="color: #FF7200;" th:text="${user.gold}"></span>
-      <i class="iconfont icon-shijian"></i><span>2015-6-17 加入</span>
-      <i class="iconfont icon-chengshi"></i><span>来自杭州</span>
+      <i class="iconfont icon-kiss" title="金币"></i><span style="color: #FF7200;" th:text="${user.gold}"></span>
+      <i class="iconfont icon-shijian"></i><span th:text="${#calendars.format(user.registTime,'yyyy-MM-dd HH:mm:ss')}+'加入'"></span>
+      <i class="iconfont icon-chengshi"></i><span th:text="'来自 '+(${user.city}?:'未知')"></span>
     </p>
 
-    <p class="fly-home-sign">（人生仿若一场修行）</p>
+    <p class="fly-home-sign" th:text="'个性签名： '+(${user.signature}?: _)" ></p>
 
     <div class="fly-sns" data-user="">
       <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend">加为好友</a>
@@ -101,7 +102,7 @@
     </div>
 
   </div>
-
+</div>
   <div class="layui-container">
     <div class="layui-row layui-col-space15">
       <div class="layui-col-md6 fly-home-jie">
@@ -114,36 +115,7 @@
               <i>刚刚</i>
               <em class="layui-hide-xs">1136阅/27答</em>
             </li>
-            <li>
-              <a href="" class="jie-title"> 基于 layui 的极简社区页面模版</a>
-              <i>1天前</i>
-              <em class="layui-hide-xs">1136阅/27答</em>
-            </li>
-            <li>
-              <a href="" class="jie-title"> 基于 layui 的极简社区页面模版</a>
-              <i>2017-10-30</i>
-              <em class="layui-hide-xs">1136阅/27答</em>
-            </li>
-            <li>
-              <a href="" class="jie-title"> 基于 layui 的极简社区页面模版</a>
-              <i>1天前</i>
-              <em class="layui-hide-xs">1136阅/27答</em>
-            </li>
-            <li>
-              <a href="" class="jie-title"> 基于 layui 的极简社区页面模版</a>
-              <i>1天前</i>
-              <em class="layui-hide-xs">1136阅/27答</em>
-            </li>
-            <li>
-              <a href="" class="jie-title"> 基于 layui 的极简社区页面模版</a>
-              <i>1天前</i>
-              <em class="layui-hide-xs">1136阅/27答</em>
-            </li>
-            <li>
-              <a href="" class="jie-title"> 基于 layui 的极简社区页面模版</a>
-              <i>1天前</i>
-              <em class="layui-hide-xs">1136阅/27答</em>
-            </li>
+
             <!-- <div class="fly-none" style="min-height: 50px; padding:30px 0; height:auto;"><i style="font-size:14px;">没有发表任何求解</i></div> -->
           </ul>
         </div>
@@ -182,7 +154,6 @@ full: true
       </div>
     </div>
   </div>
-</div>
 <div class="fly-footer">
   <p><a href="http://fly.layui.com/" target="_blank">Fly社区</a> 2017 &copy; <a href="http://www.layui.com/" target="_blank">layui.com 出品</a></p>
   <p>
@@ -192,22 +163,22 @@ full: true
   </p>
 </div>
 
-<script src="../../res/layui/layui.js"></script>
+<script src="/res/layui/layui.js"></script>
 <script>
-layui.cache.page = 'user';
-layui.cache.user = {
-  username: '游客'
-  ,uid: -1
-  ,avatar: '../../res/images/avatar/00.jpg'
-  ,experience: 83
-  ,sex: '男'
-};
-layui.config({
-  version: "3.0.0"
-  ,base: '../../res/mods/'
-}).extend({
-  fly: 'index'
-}).use('fly');
+  layui.cache.page = '';
+  layui.cache.user = {
+    username: '游客'
+    ,uid: -1
+    ,avatar: '../res/images/avatar/00.jpg'
+    ,experience: 83
+    ,sex: '男'
+  };
+  layui.config({
+    version: "3.0.0"
+    ,base: '/res/mods/' //这里实际使用时，建议改成绝对路径
+  }).extend({
+    fly: 'index'
+  }).use('fly');
 </script>
 
 </body>

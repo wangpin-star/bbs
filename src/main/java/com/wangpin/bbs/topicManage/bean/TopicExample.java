@@ -945,76 +945,6 @@ public class TopicExample {
             return (Criteria) this;
         }
 
-        public Criteria andTopicModuleIsNull() {
-            addCriterion("topic_module is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleIsNotNull() {
-            addCriterion("topic_module is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleEqualTo(String value) {
-            addCriterion("topic_module =", value, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleNotEqualTo(String value) {
-            addCriterion("topic_module <>", value, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleGreaterThan(String value) {
-            addCriterion("topic_module >", value, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleGreaterThanOrEqualTo(String value) {
-            addCriterion("topic_module >=", value, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleLessThan(String value) {
-            addCriterion("topic_module <", value, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleLessThanOrEqualTo(String value) {
-            addCriterion("topic_module <=", value, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleLike(String value) {
-            addCriterion("topic_module like", value, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleNotLike(String value) {
-            addCriterion("topic_module not like", value, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleIn(List<String> values) {
-            addCriterion("topic_module in", values, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleNotIn(List<String> values) {
-            addCriterion("topic_module not in", values, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleBetween(String value1, String value2) {
-            addCriterion("topic_module between", value1, value2, "topicModule");
-            return (Criteria) this;
-        }
-
-        public Criteria andTopicModuleNotBetween(String value1, String value2) {
-            addCriterion("topic_module not between", value1, value2, "topicModule");
-            return (Criteria) this;
-        }
-
         public Criteria andTopIsNull() {
             addCriterion("`top` is null");
             return (Criteria) this;
@@ -1192,6 +1122,66 @@ public class TopicExample {
 
         public Criteria andEssenceNotBetween(Integer value1, Integer value2) {
             addCriterion("essence not between", value1, value2, "essence");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumIsNull() {
+            addCriterion("read_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumIsNotNull() {
+            addCriterion("read_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumEqualTo(Integer value) {
+            addCriterion("read_num =", value, "readNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumNotEqualTo(Integer value) {
+            addCriterion("read_num <>", value, "readNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumGreaterThan(Integer value) {
+            addCriterion("read_num >", value, "readNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumGreaterThanOrEqualTo(Integer value) {
+            addCriterion("read_num >=", value, "readNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumLessThan(Integer value) {
+            addCriterion("read_num <", value, "readNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumLessThanOrEqualTo(Integer value) {
+            addCriterion("read_num <=", value, "readNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumIn(List<Integer> values) {
+            addCriterion("read_num in", values, "readNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumNotIn(List<Integer> values) {
+            addCriterion("read_num not in", values, "readNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumBetween(Integer value1, Integer value2) {
+            addCriterion("read_num between", value1, value2, "readNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andReadNumNotBetween(Integer value1, Integer value2) {
+            addCriterion("read_num not between", value1, value2, "readNum");
             return (Criteria) this;
         }
     }

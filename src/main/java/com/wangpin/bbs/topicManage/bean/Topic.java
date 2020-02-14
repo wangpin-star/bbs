@@ -69,11 +69,6 @@ public class Topic {
     private String topicState;
 
     /**
-     * 帖子所属板块
-     */
-    private String topicModule;
-
-    /**
      * 是否置顶
      */
     private Integer top;
@@ -87,6 +82,11 @@ public class Topic {
      * 是否为精华帖
      */
     private Integer essence;
+
+    /**
+     * 帖子阅读数
+     */
+    private Integer readNum;
 
     public Integer getId() {
         return id;
@@ -192,14 +192,6 @@ public class Topic {
         this.topicState = topicState;
     }
 
-    public String getTopicModule() {
-        return topicModule;
-    }
-
-    public void setTopicModule(String topicModule) {
-        this.topicModule = topicModule;
-    }
-
     public Integer getTop() {
         return top;
     }
@@ -224,6 +216,14 @@ public class Topic {
         this.essence = essence;
     }
 
+    public Integer getReadNum() {
+        return readNum;
+    }
+
+    public void setReadNum(Integer readNum) {
+        this.readNum = readNum;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -243,10 +243,10 @@ public class Topic {
         sb.append(", lastReplyName=").append(lastReplyName);
         sb.append(", moduleName=").append(moduleName);
         sb.append(", topicState=").append(topicState);
-        sb.append(", topicModule=").append(topicModule);
         sb.append(", top=").append(top);
         sb.append(", end=").append(end);
         sb.append(", essence=").append(essence);
+        sb.append(", readNum=").append(readNum);
         sb.append("]");
         return sb.toString();
     }
@@ -276,10 +276,10 @@ public class Topic {
                 && (this.getLastReplyName() == null ? other.getLastReplyName() == null : this.getLastReplyName().equals(other.getLastReplyName()))
                 && (this.getModuleName() == null ? other.getModuleName() == null : this.getModuleName().equals(other.getModuleName()))
                 && (this.getTopicState() == null ? other.getTopicState() == null : this.getTopicState().equals(other.getTopicState()))
-                && (this.getTopicModule() == null ? other.getTopicModule() == null : this.getTopicModule().equals(other.getTopicModule()))
                 && (this.getTop() == null ? other.getTop() == null : this.getTop().equals(other.getTop()))
                 && (this.getEnd() == null ? other.getEnd() == null : this.getEnd().equals(other.getEnd()))
-                && (this.getEssence() == null ? other.getEssence() == null : this.getEssence().equals(other.getEssence()));
+                && (this.getEssence() == null ? other.getEssence() == null : this.getEssence().equals(other.getEssence()))
+                && (this.getReadNum() == null ? other.getReadNum() == null : this.getReadNum().equals(other.getReadNum()));
     }
 
     @Override
@@ -299,10 +299,10 @@ public class Topic {
         result = prime * result + ((getLastReplyName() == null) ? 0 : getLastReplyName().hashCode());
         result = prime * result + ((getModuleName() == null) ? 0 : getModuleName().hashCode());
         result = prime * result + ((getTopicState() == null) ? 0 : getTopicState().hashCode());
-        result = prime * result + ((getTopicModule() == null) ? 0 : getTopicModule().hashCode());
         result = prime * result + ((getTop() == null) ? 0 : getTop().hashCode());
         result = prime * result + ((getEnd() == null) ? 0 : getEnd().hashCode());
         result = prime * result + ((getEssence() == null) ? 0 : getEssence().hashCode());
+        result = prime * result + ((getReadNum() == null) ? 0 : getReadNum().hashCode());
         return result;
     }
 }

@@ -19,6 +19,11 @@
     <result column="gold" jdbcType="INTEGER" property="gold" />
     <result column="city" jdbcType="VARCHAR" property="city" />
     <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+    <result column="question" jdbcType="VARCHAR" property="question" />
+    <result column="answer" jdbcType="VARCHAR" property="answer" />
+    <result column="spend" jdbcType="INTEGER" property="spend" />
+    <result column="vip_grade" jdbcType="INTEGER" property="vipGrade" />
+    <result column="identity" jdbcType="VARCHAR" property="identity" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--@mbg.generated-->
@@ -83,7 +88,7 @@
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, user_name, `password`, email, sex, birthday, qq, regist_time, last_time, image, 
-    topic_num, signature, gold, city, nickname
+    topic_num, signature, gold, city, nickname, question, answer, spend, vip_grade, `identity`
   </sql>
   <select id="selectByExample" parameterType="com.wangpin.bbs.userManage.bean.UserExample" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -125,12 +130,16 @@
       sex, birthday, qq, 
       regist_time, last_time, image, 
       topic_num, signature, gold, 
-      city, nickname)
+      city, nickname, question, 
+      answer, spend, vip_grade, 
+      `identity`)
     values (#{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
       #{sex,jdbcType=INTEGER}, #{birthday,jdbcType=TIMESTAMP}, #{qq,jdbcType=VARCHAR}, 
       #{registTime,jdbcType=TIMESTAMP}, #{lastTime,jdbcType=TIMESTAMP}, #{image,jdbcType=VARCHAR}, 
       #{topicNum,jdbcType=INTEGER}, #{signature,jdbcType=VARCHAR}, #{gold,jdbcType=INTEGER}, 
-      #{city,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR})
+      #{city,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR}, 
+      #{answer,jdbcType=VARCHAR}, #{spend,jdbcType=INTEGER}, #{vipGrade,jdbcType=INTEGER}, 
+      #{identity,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wangpin.bbs.userManage.bean.User" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -178,6 +187,21 @@
       <if test="nickname != null">
         nickname,
       </if>
+      <if test="question != null">
+        question,
+      </if>
+      <if test="answer != null">
+        answer,
+      </if>
+      <if test="spend != null">
+        spend,
+      </if>
+      <if test="vipGrade != null">
+        vip_grade,
+      </if>
+      <if test="identity != null">
+        `identity`,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userName != null">
@@ -221,6 +245,21 @@
       </if>
       <if test="nickname != null">
         #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="question != null">
+        #{question,jdbcType=VARCHAR},
+      </if>
+      <if test="answer != null">
+        #{answer,jdbcType=VARCHAR},
+      </if>
+      <if test="spend != null">
+        #{spend,jdbcType=INTEGER},
+      </if>
+      <if test="vipGrade != null">
+        #{vipGrade,jdbcType=INTEGER},
+      </if>
+      <if test="identity != null">
+        #{identity,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -280,6 +319,21 @@
       <if test="record.nickname != null">
         nickname = #{record.nickname,jdbcType=VARCHAR},
       </if>
+      <if test="record.question != null">
+        question = #{record.question,jdbcType=VARCHAR},
+      </if>
+      <if test="record.answer != null">
+        answer = #{record.answer,jdbcType=VARCHAR},
+      </if>
+      <if test="record.spend != null">
+        spend = #{record.spend,jdbcType=INTEGER},
+      </if>
+      <if test="record.vipGrade != null">
+        vip_grade = #{record.vipGrade,jdbcType=INTEGER},
+      </if>
+      <if test="record.identity != null">
+        `identity` = #{record.identity,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -302,7 +356,12 @@
       signature = #{record.signature,jdbcType=VARCHAR},
       gold = #{record.gold,jdbcType=INTEGER},
       city = #{record.city,jdbcType=VARCHAR},
-      nickname = #{record.nickname,jdbcType=VARCHAR}
+      nickname = #{record.nickname,jdbcType=VARCHAR},
+      question = #{record.question,jdbcType=VARCHAR},
+      answer = #{record.answer,jdbcType=VARCHAR},
+      spend = #{record.spend,jdbcType=INTEGER},
+      vip_grade = #{record.vipGrade,jdbcType=INTEGER},
+      `identity` = #{record.identity,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -353,6 +412,21 @@
       <if test="nickname != null">
         nickname = #{nickname,jdbcType=VARCHAR},
       </if>
+      <if test="question != null">
+        question = #{question,jdbcType=VARCHAR},
+      </if>
+      <if test="answer != null">
+        answer = #{answer,jdbcType=VARCHAR},
+      </if>
+      <if test="spend != null">
+        spend = #{spend,jdbcType=INTEGER},
+      </if>
+      <if test="vipGrade != null">
+        vip_grade = #{vipGrade,jdbcType=INTEGER},
+      </if>
+      <if test="identity != null">
+        `identity` = #{identity,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -372,7 +446,12 @@
       signature = #{signature,jdbcType=VARCHAR},
       gold = #{gold,jdbcType=INTEGER},
       city = #{city,jdbcType=VARCHAR},
-      nickname = #{nickname,jdbcType=VARCHAR}
+      nickname = #{nickname,jdbcType=VARCHAR},
+      question = #{question,jdbcType=VARCHAR},
+      answer = #{answer,jdbcType=VARCHAR},
+      spend = #{spend,jdbcType=INTEGER},
+      vip_grade = #{vipGrade,jdbcType=INTEGER},
+      `identity` = #{identity,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

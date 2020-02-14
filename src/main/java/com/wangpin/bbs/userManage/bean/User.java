@@ -34,8 +34,8 @@ public class User {
     /**
      * 生日
      */
-    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
     private Date birthday;
 
     /**
@@ -82,6 +82,31 @@ public class User {
      * 昵称
      */
     private String nickname;
+
+    /**
+     * 密保问题
+     */
+    private String question;
+
+    /**
+     * 答案
+     */
+    private String answer;
+
+    /**
+     * 已花费的金币
+     */
+    private Integer spend;
+
+    /**
+     * vip等级
+     */
+    private Integer vipGrade;
+
+    /**
+     * 身份
+     */
+    private String identity;
 
     public Integer getId() {
         return id;
@@ -203,6 +228,46 @@ public class User {
         this.nickname = nickname;
     }
 
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    public Integer getSpend() {
+        return spend;
+    }
+
+    public void setSpend(Integer spend) {
+        this.spend = spend;
+    }
+
+    public Integer getVipGrade() {
+        return vipGrade;
+    }
+
+    public void setVipGrade(Integer vipGrade) {
+        this.vipGrade = vipGrade;
+    }
+
+    public String getIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(String identity) {
+        this.identity = identity;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -224,6 +289,11 @@ public class User {
         sb.append(", gold=").append(gold);
         sb.append(", city=").append(city);
         sb.append(", nickname=").append(nickname);
+        sb.append(", question=").append(question);
+        sb.append(", answer=").append(answer);
+        sb.append(", spend=").append(spend);
+        sb.append(", vipGrade=").append(vipGrade);
+        sb.append(", identity=").append(identity);
         sb.append("]");
         return sb.toString();
     }
@@ -254,7 +324,12 @@ public class User {
                 && (this.getSignature() == null ? other.getSignature() == null : this.getSignature().equals(other.getSignature()))
                 && (this.getGold() == null ? other.getGold() == null : this.getGold().equals(other.getGold()))
                 && (this.getCity() == null ? other.getCity() == null : this.getCity().equals(other.getCity()))
-                && (this.getNickname() == null ? other.getNickname() == null : this.getNickname().equals(other.getNickname()));
+                && (this.getNickname() == null ? other.getNickname() == null : this.getNickname().equals(other.getNickname()))
+                && (this.getQuestion() == null ? other.getQuestion() == null : this.getQuestion().equals(other.getQuestion()))
+                && (this.getAnswer() == null ? other.getAnswer() == null : this.getAnswer().equals(other.getAnswer()))
+                && (this.getSpend() == null ? other.getSpend() == null : this.getSpend().equals(other.getSpend()))
+                && (this.getVipGrade() == null ? other.getVipGrade() == null : this.getVipGrade().equals(other.getVipGrade()))
+                && (this.getIdentity() == null ? other.getIdentity() == null : this.getIdentity().equals(other.getIdentity()));
     }
 
     @Override
@@ -276,6 +351,11 @@ public class User {
         result = prime * result + ((getGold() == null) ? 0 : getGold().hashCode());
         result = prime * result + ((getCity() == null) ? 0 : getCity().hashCode());
         result = prime * result + ((getNickname() == null) ? 0 : getNickname().hashCode());
+        result = prime * result + ((getQuestion() == null) ? 0 : getQuestion().hashCode());
+        result = prime * result + ((getAnswer() == null) ? 0 : getAnswer().hashCode());
+        result = prime * result + ((getSpend() == null) ? 0 : getSpend().hashCode());
+        result = prime * result + ((getVipGrade() == null) ? 0 : getVipGrade().hashCode());
+        result = prime * result + ((getIdentity() == null) ? 0 : getIdentity().hashCode());
         return result;
     }
 }

@@ -90,6 +90,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/res/mods/**", "anon");
         filterChainDefinitionMap.put("/res/layui/**", "anon");
         filterChainDefinitionMap.put("/res/images/**", "anon");
+        filterChainDefinitionMap.put("/res/js/**", "anon");
         //logout是shiro提供的过滤器
         filterChainDefinitionMap.put("/userManage/main", "anon");
         filterChainDefinitionMap.put("/userManage/verifyCode", "anon");

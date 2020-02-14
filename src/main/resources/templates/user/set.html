@@ -5,13 +5,18 @@
   <meta charset="utf-8">
   <title>帐号设置</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="keywords" content="fly,layui,前端社区">
-  <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
+  <meta name="keywords" content="Java,layui,前端社区">
+  <meta name="description" content="Java交流社区，致力于为Javaweb开发提供强劲动力">
   <link rel="stylesheet" href="/res/layui/css/layui.css">
   <link rel="stylesheet" href="/res/css/global.css">
+  <script src="/res/js/jquery.min.js"></script>
 </head>
 <body>
-
+<style>
+  .show:hover{
+    display: inline-block;
+  }
+</style>
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
     <a class="fly-logo" href="/">
@@ -28,21 +33,24 @@
     
     <ul class="layui-nav fly-nav-user">
       <!-- 登入后的状态 -->
-      <li class="layui-nav-item">
+      <li class="layui-nav-item login" th:if="${user!=null}">
         <a class="fly-nav-avatar" href="javascript:;">
-          <cite class="layui-hide-xs">贤心</cite>
-          <i class="iconfont icon-renzheng layui-hide-xs" title="认证信息：layui 作者"></i>
-          <i class="layui-badge fly-badge-vip layui-hide-xs">VIP3</i>
-          <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
+          <cite class="layui-hide-xs" th:text="${user?.nickname}"></cite>
+          <i class="iconfont icon-renzheng layui-hide-xs" th:title="'认证信息：'+${user.identity=='会员'}?:'无'"></i>
+          <div th:if="${user.identity=='会员'}">
+            <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="'VIP'+${user.vipGrade}"></i>
+          </div>
+          <img th:src="${user.image} ?:'/res/images/avatar/0.jpg'" th:alt="${user.userName}">
         </a>
-        <dl class="layui-nav-child">
-          <dd><a href="../user/set.html"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
-          <dd><a href="../user/message.html"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
-          <dd><a href="../user/home.html"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
+        <dl class="layui-nav-child show">
+          <dd><a href="/userManage/set"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
+          <dd><a href="/userManage/message"><i class="iconfont icon-tongzhi" style="top: 4px;"></i>我的消息</a></dd>
+          <dd><a th:href="@{/userManage/home(name=${user?.userName})}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe68e;</i>我的主页</a></dd>
           <hr style="margin: 5px 0;">
-          <dd><a href="" style="text-align: center;">退出</a></dd>
+          <dd><a href="/userManage/logout/" style="text-align: center;">退出</a></dd>
         </dl>
       </li>
+
     </ul>
   </div>
 </div>
@@ -50,25 +58,25 @@
 <div class="layui-container fly-marginTop fly-user-main">
   <ul class="layui-nav layui-nav-tree layui-inline" lay-filter="user">
     <li class="layui-nav-item">
-      <a href="home.html">
+      <a th:href="@{/userManage/home(name=${user?.userName})}">
         <i class="layui-icon">&#xe609;</i>
         我的主页
       </a>
     </li>
     <li class="layui-nav-item">
-      <a href="index.html">
+      <a href="/userManage/index">
         <i class="layui-icon">&#xe612;</i>
         用户中心
       </a>
     </li>
     <li class="layui-nav-item layui-this">
-      <a href="set.html">
+      <a href="/userManage/set">
         <i class="layui-icon">&#xe620;</i>
         基本设置
       </a>
     </li>
     <li class="layui-nav-item">
-      <a href="message.html">
+      <a href="/userManage/message">
         <i class="layui-icon">&#xe611;</i>
         我的消息
       </a>
@@ -92,139 +100,257 @@
         <li class="layui-this" lay-id="info">我的资料</li>
         <li lay-id="avatar">头像</li>
         <li lay-id="pass">密码</li>
-        <li lay-id="bind">帐号绑定</li>
       </ul>
       <div class="layui-tab-content" style="padding: 20px 0;">
         <div class="layui-form layui-form-pane layui-tab-item layui-show">
-          <form method="post">
+          <form method="post" th:object="${user}">
             <div class="layui-form-item">
               <label for="L_email" class="layui-form-label">邮箱</label>
               <div class="layui-input-inline">
-                <input type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" value="" class="layui-input">
+                <input th:field="*{email}" type="text" id="L_email" name="email" required lay-verify="email" autocomplete="off" value="" class="layui-input">
               </div>
-              <div class="layui-form-mid layui-word-aux">如果您在邮箱已激活的情况下，变更了邮箱，需<a href="activate.html" style="font-size: 12px; color: #4f99cf;">重新验证邮箱</a>。</div>
             </div>
             <div class="layui-form-item">
               <label for="L_username" class="layui-form-label">昵称</label>
               <div class="layui-input-inline">
-                <input type="text" id="L_username" name="username" required lay-verify="required" autocomplete="off" value="" class="layui-input">
+                <input th:field="*{nickname}" type="text" id="L_username" name="nickname" required lay-verify="required|" autocomplete="off" value="" class="layui-input">
               </div>
               <div class="layui-inline">
                 <div class="layui-input-inline">
-                  <input type="radio" name="sex" value="0" checked title="男">
-                  <input type="radio" name="sex" value="1" title="女">
+                  <input th:field="*{sex}" type="radio" name="sex" value="0"  title="男">
+                  <input th:field="*{sex}" type="radio" name="sex" value="1" title="女">
                 </div>
               </div>
             </div>
             <div class="layui-form-item">
               <label for="L_city" class="layui-form-label">城市</label>
               <div class="layui-input-inline">
-                <input type="text" id="L_city" name="city" autocomplete="off" value="" class="layui-input">
+                <input th:field="*{city}" type="text" id="L_city" name="city" autocomplete="off" value="" class="layui-input">
               </div>
             </div>
+
+            <div class="layui-form-item">
+              <div class="layui-input-inline">
+                <input type="hidden" th:field="*{id}" id="L_id" name="id" class="layui-input">
+              </div>
+            </div>
+
+            <div class="layui-form-item">
+              <div class="layui-inline">
+                <label class="layui-form-label">生日</label>
+                <div class="layui-input-inline">
+                  <input th:field="*{birthday}" type="text" class="layui-input" id="test1" name="birthday"  required lay-verify="required" autocomplete="off" placeholder="yyyy-MM-dd">
+                </div>
+              </div>
+            </div>
+
             <div class="layui-form-item layui-form-text">
               <label for="L_sign" class="layui-form-label">签名</label>
               <div class="layui-input-block">
-                <textarea placeholder="随便写些什么刷下存在感" id="L_sign"  name="sign" autocomplete="off" class="layui-textarea" style="height: 80px;"></textarea>
+                <textarea th:field="*{signature}" placeholder="随便写些什么刷下存在感" id="L_sign"  name="sign" autocomplete="off" class="layui-textarea" style="height: 80px;"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
-              <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit>确认修改</button>
+              <button class="layui-btn" key="set-mine" lay-filter="form1" lay-submit>确认修改</button>
             </div>
-          </div>
+          </form>
+        </div>
           
           <div class="layui-form layui-form-pane layui-tab-item">
             <div class="layui-form-item">
               <div class="avatar-add">
-                <p>建议尺寸168*168，支持jpg、png、gif，最大不能超过50KB</p>
-                <button type="button" class="layui-btn upload-img">
+                <p>建议尺寸168*168，支持jpg、png、gif，最大不能超过1024KB</p>
+                <button type="button" class="layui-btn upload-img" id="inputFile">
                   <i class="layui-icon">&#xe67c;</i>上传头像
                 </button>
-                <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
+                <img id="img" src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg">
                 <span class="loading"></span>
               </div>
             </div>
           </div>
           
           <div class="layui-form layui-form-pane layui-tab-item">
-            <form action="/user/repass" method="post">
+            <form method="post" th:object="${user}">
               <div class="layui-form-item">
-                <label for="L_nowpass" class="layui-form-label">当前密码</label>
+                <label for="L_oldpass" class="layui-form-label">当前密码</label>
                 <div class="layui-input-inline">
-                  <input type="password" id="L_nowpass" name="nowpass" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input type="password" id="L_oldpass" name="oldPassword" required lay-verify="required|pass" autocomplete="off" class="layui-input">
                 </div>
               </div>
               <div class="layui-form-item">
-                <label for="L_pass" class="layui-form-label">新密码</label>
+                <label for="L_newpass" class="layui-form-label">新密码</label>
                 <div class="layui-input-inline">
-                  <input type="password" id="L_pass" name="pass" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input type="password" id="L_newpass" name="newPassword" required lay-verify="required|pass" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-mid layui-word-aux">6到16个字符</div>
               </div>
               <div class="layui-form-item">
                 <label for="L_repass" class="layui-form-label">确认密码</label>
                 <div class="layui-input-inline">
-                  <input type="password" id="L_repass" name="repass" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input type="password" id="L_repass" name="repassword" required lay-verify="required|pass" autocomplete="off" class="layui-input">
                 </div>
               </div>
               <div class="layui-form-item">
-                <button class="layui-btn" key="set-mine" lay-filter="*" lay-submit>确认修改</button>
+                <button class="layui-btn" key="set-mine" lay-filter="form2" lay-submit>确认修改</button>
               </div>
             </form>
           </div>
           
-          <div class="layui-form layui-form-pane layui-tab-item">
-            <ul class="app-bind">
-              <li class="fly-msg app-havebind">
-                <i class="iconfont icon-qq"></i>
-                <span>已成功绑定，您可以使用QQ帐号直接登录Fly社区，当然，您也可以</span>
-                <a href="javascript:;" class="acc-unbind" type="qq_id">解除绑定</a>
-                
-                <!-- <a href="" onclick="layer.msg('正在绑定微博QQ', {icon:16, shade: 0.1, time:0})" class="acc-bind" type="qq_id">立即绑定</a>
-                <span>，即可使用QQ帐号登录Fly社区</span> -->
-              </li>
-              <li class="fly-msg">
-                <i class="iconfont icon-weibo"></i>
-                <!-- <span>已成功绑定，您可以使用微博直接登录Fly社区，当然，您也可以</span>
-                <a href="javascript:;" class="acc-unbind" type="weibo_id">解除绑定</a> -->
-                
-                <a href="" class="acc-weibo" type="weibo_id"  onclick="layer.msg('正在绑定微博', {icon:16, shade: 0.1, time:0})" >立即绑定</a>
-                <span>，即可使用微博帐号登录Fly社区</span>
-              </li>
-            </ul>
-          </div>
         </div>
 
       </div>
     </div>
   </div>
-</div>
 
 <div class="fly-footer">
-  <p><a href="http://fly.layui.com/" target="_blank">Fly社区</a> 2017 &copy; <a href="http://www.layui.com/" target="_blank">layui.com 出品</a></p>
+  <p><a href="http://fly.layui.com/" target="_blank">Fly社区</a> 2020 &copy; <a href="http://www.layui.com/" target="_blank"></a></p>
   <p>
     <a href="http://fly.layui.com/jie/3147/" target="_blank">付费计划</a>
     <a href="http://www.layui.com/template/fly/" target="_blank">获取Fly社区模版</a>
     <a href="http://fly.layui.com/jie/2461/" target="_blank">微信公众号</a>
   </p>
 </div>
+<script src="/res/layui/layui.js"></script>
 
-<script src="../../res/layui/layui.js"></script>
 <script>
-layui.cache.page = 'user';
-layui.cache.user = {
-  username: '游客'
-  ,uid: -1
-  ,avatar: '../../res/images/avatar/00.jpg'
-  ,experience: 83
-  ,sex: '男'
-};
-layui.config({
-  version: "2.0.0"
-  ,base: '../../res/mods/'
-}).extend({
-  fly: 'index'
-}).use('fly');
+  layui.config({
+    version: "3.0.0"
+    ,base: '/res/mods/'
+  }).extend({
+    fly: 'index'
+  }).use('fly');
+
+layui.use(['form','upload', 'laydate'], function(){
+  var form = layui.form
+          ,layer = layui.layer
+          ,upload=layui.upload
+          ,laydate = layui.laydate;
+  //日期
+  laydate.render({
+    elem: '#test1'
+  });
+
+  //文件上传
+  var uploadInst = upload.render({
+    elem: '#inputFile'
+    ,url: '/userManage/uploadImage' //改成您自己的上传接口
+    ,size: 1024 //限制文件大小，单位 KB
+    ,method:'post'//类型
+    ,accept:'images'
+    ,before: function(obj){
+      console.log("zhiqian");
+      //预读本地文件示例，不支持ie8
+      obj.preview(function(index, file, result){
+        $('#img').attr('src', result); //图片链接（base64）
+      });
+    }
+    ,done: function(res){
+      //如果上传失败
+      console.log(res.data.url);
+      if(res.code > 0){
+        return layer.msg('上传成功！');
+      }
+      //上传成功
+    }
+    ,error: function(){
+      //演示失败状态，并实现重传
+      var demoText = $('#demoText');
+      demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+      demoText.find('.demo-reload').on('click', function(){
+        uploadInst.upload();
+      });
+    }
+  });
+
+  //提交用户信息
+  form.on('submit(form1)', function(data){
+    console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+    console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+    console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+    $.ajax({
+      url:'/userManage/set/saveUserInfo',
+      data: data.field,
+      type:"POST",
+      dataType: "json",
+      success: function (data) {
+        console.log(data);
+
+        if (data.resultCode>=1)
+          layer.msg(data.resultMsg, {
+            icon: 1,
+            time: 3000 //2秒关闭（如果不配置，默认是3秒）
+          } );
+        else
+          layer.msg(data.resultMsg, {
+            icon: 5,
+            time: 3000 //2秒关闭（如果不配置，默认是3秒）
+          } );
+      }
+
+    });
+    return false;
+  });
+
+
+  function validator() {     //两次密码验证
+    if ($("#L_newpass").val()!=$("#L_repass").val()) {
+      return false;
+    }
+    return true;
+  }
+  $('#L_repass').blur(function () {
+    var that = this;
+    if (!validator()){
+      layer.tips('两次密码不一致', that); //在元素的事件回调体中，follow直接赋予this即可
+    }
+
+  });
+
+  //提交密码修改
+  form.on('submit(form2)', function(data){
+    console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+    console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+    console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+    if (!validator()){
+      layer.msg('两次密码不一致，提交失败', {
+        icon: 5,
+        time: 3000 //2秒关闭（如果不配置，默认是3秒）
+      });
+      return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    }
+
+    $.ajax({
+      url:'/userManage/editUserPwd',
+      data: data.field,
+      type:"POST",
+      dataType: "json",
+      success: function (data) {
+        console.log(data);
+        if (data.resultCode>=1)
+          layer.msg(data.resultMsg, {
+            icon: 1,
+            time: 3000 //2秒关闭（如果不配置，默认是3秒）
+          } );
+        else
+          layer.msg(data.resultMsg, {
+            icon: 5,
+            time: 3000 //2秒关闭（如果不配置，默认是3秒）
+          } );
+      }
+    });
+    return false;
+  });
+
+  form.verify({
+    pass: [
+      /^[\S]{6,12}$/
+      ,'密码必须6到12位，且不能出现空格'
+    ]
+    ,name: [/^[^0-9][\w_]{4,12}$/,'用户名只能是字母数字和下划线，且不能以字母开头,长度为4~12']
+    ,qq:[/^[1-9][0-9]{6,14}$/,'qq格式不正确']
+  });
+});
+
 </script>
 
 </body>

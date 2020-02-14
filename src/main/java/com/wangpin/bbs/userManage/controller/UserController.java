@@ -1,9 +1,7 @@
 package com.wangpin.bbs.userManage.controller;
 
 
-import com.alibaba.fastjson.JSONArray;
 import com.wangpin.bbs.userManage.bean.User;
-import com.wangpin.bbs.userManage.bean.UserVo;
 import com.wangpin.bbs.userManage.service.implement.UserServiceImpl;
 import com.wangpin.bbs.utils.CodeUtil;
 import com.wangpin.bbs.utils.ResultDomain;
@@ -17,17 +15,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Controller
@@ -45,14 +47,16 @@ public class UserController {
 	String login="user/login";
 	//验证码
 	String randCheckCode="randCheckCode";
-	//修改密码页面
-	String useredit="user/usereditpwd";
-
 
 	@RequestMapping({"/login"})
-	public String toLogin(Model model) {
+	public String toLogin(Model model, HttpServletRequest request ) {
 		model.addAttribute(string, "null");
-		return login;
+		HttpSession session=request.getSession();
+		User user= (User) session.getAttribute("user");
+		if (user==null)
+			return login;
+		else
+			return "redirect:/userManage/home?name="+user.getUserName();
 	}
 
 	
@@ -146,9 +150,13 @@ public class UserController {
 	 * @return
 	 */
 	@GetMapping(value = "/toRegist")
-	public String toRegister(){
-
-		return "user/reg";
+	public String toRegister(HttpServletRequest request){
+		HttpSession session=request.getSession();
+		User user= (User) session.getAttribute("user");
+		if (user==null)
+			return "user/reg";
+		else
+			return "redirect:/userManage/home?name="+user.getUserName();
 	}
 
 	@PostMapping(value = "/userRegist")
@@ -161,6 +169,9 @@ public class UserController {
 		String password =DigestUtils.sha1Hex(user.getPassword().getBytes("UTF-8"));
 		user.setPassword(password);
 		user.setGold(0);
+		user.setIdentity("普通用户");
+		user.setVipGrade(0);
+		user.setSpend(0);
 		resultDomain=userServiceImpl.userAdd(user);
 		log.info(resultDomain.getResultMsg());
 			return resultDomain;
@@ -225,36 +236,6 @@ public class UserController {
 
 
 	/**
-	 * 跳转到用户信息页面
-	 * @return
-	 */
-	@PostMapping(value = "toUserInfo")
-	public String editUserinfo(){
-		return "user/userIofo";
-	}
-
-	/**
-	 * 保存用户信息
-	 * @return
-	 */
-	@PostMapping(value = "saveUserInfo")
-	public String saveUserinfo(@RequestBody User user){
-		userServiceImpl.userInfoUpload(user);
-		return "user/userIofo";
-	}
-
-	/**
-	 * 跳转到修改密码页面
-	 *
-	 * @return 跳转到修改密码页面
-	 */
-	@RequestMapping(value = "user/toEditPwd")
-	public String editPwd(HttpServletResponse res,int loginResult,Model model) {
-		model.addAttribute(string, loginResult);
-		return useredit;
-	}
-
-	/**
 	 * 修改密码
 	 * 
 	 * @param response     页面弹框
@@ -265,25 +246,28 @@ public class UserController {
 	 */
 	@PostMapping(value = "editUserPwd")
 	@ResponseBody
-	public String editUserpwd(HttpServletResponse response, HttpServletRequest request,
+	public ResultDomain editUserpwd(HttpServletResponse response, HttpServletRequest request,
 							  @RequestParam("newPassword") String new_password, @RequestParam ("oldPassword") String old_password, Model model)
 			throws IOException {
 		// 从session取值
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
-		int result = 1;
-		if (user==null)
-			return "非法操作，请登录后进行！";
+		ResultDomain<User> resultDomain=new ResultDomain<>();
+		if (user==null){
+			resultDomain.setResultMsg("非法操作！请登陆后进行！");
+			resultDomain.setResultCode(-1);
+			return resultDomain;
+		}
 		if (!user.getPassword().equals(DigestUtils.sha1Hex(old_password))) {
-			//model.addAttribute(string, 1);
-			return "请输入正确的旧密码";
+			resultDomain.setResultMsg("旧密码错误！请重新输入！");
+			resultDomain.setResultCode(-1);
+			return  resultDomain;
 		}
 		else {
 			// 设置新密码
 			user.setPassword(DigestUtils.sha1Hex(new_password));
-			ResultDomain<User> resultDomain = userServiceImpl.userInfoUpload(user);
-			result = resultDomain.getResultCode();
-			return resultDomain.getResultMsg();
+			resultDomain = userServiceImpl.userInfoUpload(user);
+			return resultDomain;
 		}
 	}
 
@@ -305,6 +289,8 @@ public class UserController {
 			}
 			else{
 				User user2=userServiceImpl.userFindByName(name).getResultData();
+				if (user2==null)
+					user2=userServiceImpl.userFindByNickname(name).getResultData();
 				model.addAttribute("user",user2);
 
 			}
@@ -327,14 +313,119 @@ public class UserController {
 	}
 
 	/**
+	 * 保存用户信息
+	 * @param
+	 * @return
+	 */
+	@PostMapping (value ="/set/saveUserInfo")
+	@ResponseBody
+	public  ResultDomain<User> SaveUserSet(HttpServletRequest request,User user){
+		HttpSession session=request.getSession();
+		User user1= (User) session.getAttribute("user");
+		ResultDomain<User> userResultDomain=new ResultDomain<>();
+		if (user!=null){
+			user1.setEmail(user.getEmail());
+			user1.setNickname(user.getNickname());
+			user1.setSex(user.getSex());
+			user1.setSignature(user.getSignature());
+			user1.setCity(user.getCity());
+			user1.setBirthday(user.getBirthday());
+			userResultDomain=userServiceImpl.userInfoUpload(user1);
+		}
+		else {
+			userResultDomain.setResultMsg("用户未登录");
+			userResultDomain.setResultCode(-1);
+		}
+		return userResultDomain;
+	}
+
+	//资源上传
+	@PostMapping (value="/uploadImage")
+	@ResponseBody//json交互注解
+	public Map<String, Object> uploadResource(HttpServletRequest request, HttpServletResponse response, HttpSession session, MultipartFile file) throws Exception{
+		User user = (User) session.getAttribute("user");
+		String prefix="";
+		String dateStr="";
+		//保存上传
+		OutputStream out = null;
+		InputStream fileInput=null;
+		if(user==null){
+			Map<String,Object> map=new HashMap<>();
+			map.put("code",-1);
+			map.put("msg","用户尚未登录！");
+			return map;
+		}
+
+		try{
+			if(file!=null){
+				String originalName = file.getOriginalFilename();
+				prefix=originalName.substring(originalName.lastIndexOf(".")+1);
+				Date date = new Date();
+				String uuid = UUID.randomUUID()+"";
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				dateStr = simpleDateFormat.format(date);
+				String filepath = "C:\\Users\\1\\IdeaProjects\\bbs\\userImg\\" + dateStr+"_"+uuid+"." + prefix;
+				File files=new File(filepath);
+				//打印查看上传路径
+				System.out.println(filepath);
+				if(!files.getParentFile().exists()){
+					files.getParentFile().mkdirs();
+				}
+				file.transferTo(files);
+				Map<String,Object> map2=new HashMap<>();
+				Map<String,Object> map=new HashMap<>();
+				map.put("code",1);
+				map.put("msg","上传成功！");
+				map.put("data",map2);
+				map2.put("src","/images/"+ dateStr+"/"+uuid+"." + prefix);
+				user.setImage("/userImg/"+ dateStr+"_"+uuid+"." + prefix);
+				log.info("用户头像上传成功！保存信息中。。。");
+				userServiceImpl.userInfoUpload(user);
+				return map;
+			}
+
+		}catch (Exception e){
+		}finally{
+			try {
+				if(out!=null){
+					out.close();
+				}
+				if(fileInput!=null){
+					fileInput.close();
+				}
+			} catch (IOException e) {
+			}
+		}
+		Map<String,Object> map=new HashMap<>();
+		map.put("code",0);
+		map.put("msg","上传失败！");
+		return map;
+	}
+
+	/**
 	 * 跳转到用户中心
-	 * @param uid
+	 * @param
 	 * @return
 	 */
 	@RequestMapping(value ="/index")
-	public  String toUserIndex(int uid){
-
+	public  String toUserIndex(HttpServletRequest request,Model model){
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("user");
+		model.addAttribute("user",user);
 		return "user/index";
+	}
+
+	/**
+	 * 跳转到消息
+	 * @param
+	 * @return
+	 */
+	@RequestMapping(value ="/message")
+	public  String toUserMessage(HttpServletRequest request,Model model){
+		HttpSession session=request.getSession();
+		User user = (User) session.getAttribute("user");
+		model.addAttribute("user",user);
+		return "user/message";
 	}
 
 	/**
