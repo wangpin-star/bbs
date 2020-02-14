@@ -31,11 +31,14 @@
       <li class="layui-nav-item login" th:if="${user!=null}">
         <a class="fly-nav-avatar" href="javascript:;">
           <cite class="layui-hide-xs" th:text="${user?.nickname}"></cite>
-          <i class="iconfont icon-renzheng layui-hide-xs" th:title="'认证信息：'+${user.identity=='会员'}?:'无'"></i>
-          <div th:if="${user.identity=='会员'}">
+          <i class="iconfont icon-renzheng layui-hide-xs" th:if="${user.identity=='会员'}" th:title="'认证信息：'+(${user.identity=='会员'} ? ${user.identity}:'无')"></i>
+          <div th:if="${user.identity=='会员'}" style="display: inline-block;">
             <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="'VIP'+${user.vipGrade}"></i>
           </div>
-          <img th:src="${user.image} ?:'/res/images/avatar/0.jpg'" th:alt="${user.userName}">
+          <div th:if="${user.identity=='管理员'}" style="display: inline-block;">
+            <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="管理员"></i>
+          </div>
+          <img th:src="${user.image} ?:'/userImg/0.jpg'" th:alt="${user.userName}">
         </a>
         <dl class="layui-nav-child">
           <dd><a href="/userManage/set"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>

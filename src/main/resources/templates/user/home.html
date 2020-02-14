@@ -13,23 +13,6 @@
 </head>
 <body style="margin-top: 65px;">
 <style>
-  .bg{
-    background: url(/static/res/images/userImg/default.jpg) no-repeat;
-    background-size: cover;
-    position: relative;
-  }
-  .demo2{
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    width: 500px;
-    height: 300px;
-    line-height: 50px;
-    text-align: center;
-    background:rgba(255,255,255,0.3);
-  }
 </style>
   <div class="fly-header layui-bg-black">
     <div class="layui-container">
@@ -50,11 +33,14 @@
         <li class="layui-nav-item login" th:if="${user!=null}">
           <a class="fly-nav-avatar" href="javascript:;">
             <cite class="layui-hide-xs" th:text="${user?.nickname}"></cite>
-            <i class="iconfont icon-renzheng layui-hide-xs" th:title="'认证信息：'+${user.identity=='会员'}?:'无'"></i>
-            <div th:if="${user.identity=='会员'}">
+            <i class="iconfont icon-renzheng layui-hide-xs" th:if="${user.identity=='会员'}" th:title="'认证信息：'+(${user.identity=='会员'} ? ${user.identity}:'无')"></i>
+            <div th:if="${user.identity=='会员'}" style="display: inline-block;">
               <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="'VIP'+${user.vipGrade}"></i>
             </div>
-            <img th:src="${user.image} ?:'/res/images/avatar/0.jpg'" th:alt="${user.userName}">
+            <div th:if="${user.identity=='管理员'}" style="display: inline-block;">
+              <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="管理员"></i>
+            </div>
+            <img th:src="${user.image} ?:'/userImg/0.jpg'" th:alt="${user.userName}">
           </a>
           <dl class="layui-nav-child">
             <dd><a href="/userManage/set"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
@@ -64,7 +50,6 @@
             <dd><a href="/userManage/logout/" style="text-align: center;">退出</a></dd>
           </dl>
         </li>
-
       </ul>
     </div>
   </div>
@@ -94,7 +79,7 @@
       <i class="iconfont icon-chengshi"></i><span th:text="'来自 '+(${user.city}?:'未知')"></span>
     </p>
 
-    <p class="fly-home-sign" th:text="'个性签名： '+(${user.signature}?: _)" ></p>
+    <p class="fly-home-sign" th:text="'个性签名： '+(${user.signature}?:'_')" ></p>
 
     <div class="fly-sns" data-user="">
       <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend">加为好友</a>

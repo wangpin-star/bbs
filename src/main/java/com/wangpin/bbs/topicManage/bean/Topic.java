@@ -88,6 +88,11 @@ public class Topic {
      */
     private Integer readNum;
 
+    /**
+     * 悬赏金币数
+     */
+    private Integer gold;
+
     public Integer getId() {
         return id;
     }
@@ -224,6 +229,14 @@ public class Topic {
         this.readNum = readNum;
     }
 
+    public Integer getGold() {
+        return gold;
+    }
+
+    public void setGold(Integer gold) {
+        this.gold = gold;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -247,6 +260,7 @@ public class Topic {
         sb.append(", end=").append(end);
         sb.append(", essence=").append(essence);
         sb.append(", readNum=").append(readNum);
+        sb.append(", gold=").append(gold);
         sb.append("]");
         return sb.toString();
     }
@@ -279,7 +293,8 @@ public class Topic {
                 && (this.getTop() == null ? other.getTop() == null : this.getTop().equals(other.getTop()))
                 && (this.getEnd() == null ? other.getEnd() == null : this.getEnd().equals(other.getEnd()))
                 && (this.getEssence() == null ? other.getEssence() == null : this.getEssence().equals(other.getEssence()))
-                && (this.getReadNum() == null ? other.getReadNum() == null : this.getReadNum().equals(other.getReadNum()));
+                && (this.getReadNum() == null ? other.getReadNum() == null : this.getReadNum().equals(other.getReadNum()))
+                && (this.getGold() == null ? other.getGold() == null : this.getGold().equals(other.getGold()));
     }
 
     @Override
@@ -303,6 +318,7 @@ public class Topic {
         result = prime * result + ((getEnd() == null) ? 0 : getEnd().hashCode());
         result = prime * result + ((getEssence() == null) ? 0 : getEssence().hashCode());
         result = prime * result + ((getReadNum() == null) ? 0 : getReadNum().hashCode());
+        result = prime * result + ((getGold() == null) ? 0 : getGold().hashCode());
         return result;
     }
 }
