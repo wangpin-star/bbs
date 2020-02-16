@@ -1,6 +1,8 @@
 package com.wangpin.bbs.userManage.controller;
 
 
+import com.wangpin.bbs.topicManage.bean.Topic;
+import com.wangpin.bbs.topicManage.service.implement.TopicServiceImpl;
 import com.wangpin.bbs.userManage.bean.User;
 import com.wangpin.bbs.userManage.service.implement.UserServiceImpl;
 import com.wangpin.bbs.utils.CodeUtil;
@@ -26,10 +28,7 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -37,6 +36,8 @@ import java.util.UUID;
 public class UserController {
 	@Autowired
 	private UserServiceImpl userServiceImpl;
+	@Autowired
+	private TopicServiceImpl topicServiceImpl;
 
 
 	Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -280,7 +281,6 @@ public class UserController {
 	public  String toUserHome(HttpServletRequest request,Model model,@RequestParam String name){
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("user");
-		log.info(user.toString());
 		if (user==null)
 			return "/login";
 		else {
@@ -377,7 +377,7 @@ public class UserController {
 				map.put("code",1);
 				map.put("msg","上传成功！");
 				map.put("data",map2);
-				map2.put("src","/images/"+ dateStr+"/"+uuid+"." + prefix);
+				map.put("src","/userImg/"+ dateStr+"_"+uuid+"." + prefix);
 				user.setImage("/userImg/"+ dateStr+"_"+uuid+"." + prefix);
 				log.info("用户头像上传成功！保存信息中。。。");
 				userServiceImpl.userInfoUpload(user);
@@ -452,6 +452,16 @@ public class UserController {
 	private  String toStart(HttpSession httpSession,Model model) {
 		log.info("主页");
 		User user=(User)httpSession.getAttribute("user");
+		List<Topic> topicsTop=topicServiceImpl.queryModuleTopic(null,null,null,0,1).getResultData();
+		List<Topic> topicsAll=topicServiceImpl.queryModuleTopic(null,null,null,0,0).getResultData();
+		model.addAttribute("topicsTop",topicsTop);
+		model.addAttribute("topicsAll",topicsAll);
+		for (Topic topic:topicsTop) {
+			System.out.println(topic);
+		}
+		for (Topic topic:topicsAll) {
+			System.out.println(topic);
+		}
 		if (user!=null){
 			log.info(user.toString());
 			model.addAttribute("user",user);

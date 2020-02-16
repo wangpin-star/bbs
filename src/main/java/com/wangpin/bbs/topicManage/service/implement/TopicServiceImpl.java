@@ -57,7 +57,7 @@ public class TopicServiceImpl implements TopicService {
         ResultDomain resultDomain=new ResultDomain<>();
         log.info("");
         try {
-            int code=replyDao.insert(reply);
+            int code=replyDao.insertSelective(reply);
             resultDomain.setResultCode(code);
             resultDomain.setResultMsg("回复成功！");
         }catch (Exception e){
@@ -99,7 +99,7 @@ public class TopicServiceImpl implements TopicService {
     public ResultDomain addTopic(Topic topic) {
         ResultDomain resultDomain=new ResultDomain<>();
         try {
-            int code=topicDao.insert(topic);
+            int code=topicDao.insertSelective(topic);
             resultDomain.setResultCode(code);
             resultDomain.setResultMsg("发贴成功！");
         }catch (Exception e){
@@ -168,11 +168,11 @@ public class TopicServiceImpl implements TopicService {
      * @return
      */
     @Override
-    public ResultDomain<List<Topic>> queryModuleTopic(String moduleName,Integer end,Integer essence,int page) {
+    public ResultDomain<List<Topic>> queryModuleTopic(String moduleName,Integer end,Integer essence,int page,Integer top) {
         ResultDomain<List<Topic>> resultDomain=new ResultDomain<>();
         int offset=page*10;
         try {
-            List<Topic> topics=topicDao.selectByModuleNameOrTopicState(offset,moduleName,end,essence);
+            List<Topic> topics=topicDao.selectByModuleNameOrTopicState(offset,moduleName,end,essence,top);
             resultDomain.setResultCode(1);
             resultDomain.setResultData(topics);
             resultDomain.setResultMsg("查询成功！");

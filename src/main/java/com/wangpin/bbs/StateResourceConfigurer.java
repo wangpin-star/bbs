@@ -18,6 +18,8 @@ public class StateResourceConfigurer extends WebMvcConfigurerAdapter {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
         registry.addResourceHandler("/userImg/**").addResourceLocations("file:C:/Users/1/IdeaProjects/bbs/userImg/");
+        registry.addResourceHandler("/topicImg/**").addResourceLocations("file:C:/Users/1/IdeaProjects/bbs/topicImg/");
+
         super.addResourceHandlers(registry);
     }
 }

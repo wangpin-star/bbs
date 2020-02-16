@@ -96,7 +96,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/userManage/verifyCode", "anon");
         filterChainDefinitionMap.put("/userManage/logout", "logout");
         //其他资源都需要认证  authc 表示需要认证才能进行访问 user表示配置记住我或认证通过可以访问的地址
-        filterChainDefinitionMap.put("/**", "authc");
+        filterChainDefinitionMap.put("/**", "user");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
     }

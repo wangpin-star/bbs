@@ -13,5 +13,5 @@ public interface TopicService {
     ResultDomain addTopic(Topic topic);
     ResultDomain deleteTopic(int topicId);
     ResultDomain<List<Topic>> queryUserTopic(int userId);
-    ResultDomain<List<Topic>> queryModuleTopic(String moduleName,Integer end,Integer essence,int page);
+    ResultDomain<List<Topic>> queryModuleTopic(String moduleName,Integer end,Integer essence,int page,Integer top);
 }

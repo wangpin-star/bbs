@@ -1,5 +1,6 @@
 package com.wangpin.bbs;
 
+import com.wangpin.bbs.topicManage.bean.Topic;
 import com.wangpin.bbs.topicManage.service.TopicService;
 import com.wangpin.bbs.userManage.service.PermissionService;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,9 @@ class BbsApplicationTests {
     TopicService topicService;
     @Test
     void contextLoads() {
-        System.out.println(topicService.queryModuleTopic("提问",null,null,0).getResultData());
+        for (Topic topic:topicService.queryModuleTopic(null,null,null,0,null).getResultData()) {
+            System.out.println(topic);
+        }
     }
 
 

@@ -430,6 +430,7 @@
     FROM topic
     <where>
       id >=(select id from topic limit #{offset}, 1)
+        AND topic_state!="删除"
       <if test="moduleName !=null ">
         AND module_name= #{moduleName, jdbcType=CHAR}
       </if >
@@ -439,7 +440,10 @@
       <if test="essence!= null ">
         AND essence= #{end, jdbcType=INTEGER}
       </if >
+      <if test="top!= null ">
+        AND top= #{top, jdbcType=INTEGER}
+      </if >
     </where>
-    limit 2
+     order by top DESC,create_time ASC limit 10
   </select>
 </mapper>

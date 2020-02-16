@@ -156,11 +156,14 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
               //执行上传实例
               upload.render({
                 elem: '#uploadImg'
-                ,url: '/api/upload/'
+                ,url: '/topicManage/uploadTopicImg'
                 ,size: 200
                 ,done: function(res){
-                  if(res.status == 0){
-                    image.val(res.url);
+                  if(res.code > 0){
+                    hasUploadImg=1;
+                    image.val(res.src);
+                    layer.msg(res.msg, {icon: 1});
+                    console.log(res);
                   } else {
                     layer.msg(res.msg, {icon: 5});
                   }
@@ -383,7 +386,7 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
         ,'</table>'
         ,'<ul>'
           ,'<li>中间若有间隔，则连续天数重新计算</li>'
-          ,'<li style="color: #FF5722;">不可利用程序自动签到，否则飞吻清零</li>'
+          ,'<li style="color: #FF5722;">不可利用程序自动签到，否则金币清零</li>'
         ,'</ul>'
       ,'</div>'].join('')
     });
@@ -524,7 +527,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
     ,bgcolor: '#009688'
     ,click: function(type){
       if(type === 'bar1'){
-        layer.msg('打开 index.js，开启发表新帖的路径');
         location.href = '/topicManage/toAddTopic';
       }
     }

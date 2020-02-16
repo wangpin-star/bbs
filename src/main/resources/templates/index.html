@@ -102,17 +102,16 @@
       <div class="fly-panel">
         <div class="fly-panel-title fly-filter">
           <a>置顶</a>
-          <a href="#signin" class="layui-hide-sm layui-show-xs-block fly-right" id="LAY_goSignin" style="color: #FF5722;">去签到</a>
         </div>
 
         <ul class="fly-list">
-          <li>
+          <li th:each="topicTop : ${topicsTop}">
             <a href="user/home.html" class="fly-avatar">
               <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" alt="贤心">
             </a>
             <h2>
               <a class="layui-badge">动态</a>
-              <a href="jie/detail.html">基于 layui 的极简社区页面模版</a>
+              <a th:href="@{/userManage/home(name=${topicTop?.userName})}" >基于 layui 的极简社区页面模版</a>
             </h2>
             <div class="fly-list-info">
               <a href="user/home.html" link>
@@ -211,13 +210,13 @@
           <span class="fly-signin-days">已连续签到<cite>16</cite>天</span>
         </div>
         <div class="fly-panel-main fly-signin-main">
-          <button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>
+          <button class="layui-btn layui-btn-danger" id="LAY_signin">签到</button>
           <span>可获得<cite>5</cite>金币</span>
           
           <!-- 已签到状态 -->
           <!--
-          <button class="layui-btn layui-btn-disabled">今日已签到</button>
-          <span>获得了<cite>20</cite>飞吻</span>
+          <button class="layui-btn layui-btn-disabled">今天已经签到</button>
+          <span>获得了<cite>20</cite>金币</span>
           -->
         </div>
       </div>
