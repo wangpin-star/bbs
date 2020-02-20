@@ -1244,6 +1244,136 @@ public class TopicExample {
             addCriterion("gold not between", value1, value2, "gold");
             return (Criteria) this;
         }
+
+        public Criteria andUserimgIsNull() {
+            addCriterion("userImg is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgIsNotNull() {
+            addCriterion("userImg is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgEqualTo(String value) {
+            addCriterion("userImg =", value, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgNotEqualTo(String value) {
+            addCriterion("userImg <>", value, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgGreaterThan(String value) {
+            addCriterion("userImg >", value, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgGreaterThanOrEqualTo(String value) {
+            addCriterion("userImg >=", value, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgLessThan(String value) {
+            addCriterion("userImg <", value, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgLessThanOrEqualTo(String value) {
+            addCriterion("userImg <=", value, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgLike(String value) {
+            addCriterion("userImg like", value, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgNotLike(String value) {
+            addCriterion("userImg not like", value, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgIn(List<String> values) {
+            addCriterion("userImg in", values, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgNotIn(List<String> values) {
+            addCriterion("userImg not in", values, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgBetween(String value1, String value2) {
+            addCriterion("userImg between", value1, value2, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andUserimgNotBetween(String value1, String value2) {
+            addCriterion("userImg not between", value1, value2, "userimg");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyIsNull() {
+            addCriterion("can_reply is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyIsNotNull() {
+            addCriterion("can_reply is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyEqualTo(Integer value) {
+            addCriterion("can_reply =", value, "canReply");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyNotEqualTo(Integer value) {
+            addCriterion("can_reply <>", value, "canReply");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyGreaterThan(Integer value) {
+            addCriterion("can_reply >", value, "canReply");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyGreaterThanOrEqualTo(Integer value) {
+            addCriterion("can_reply >=", value, "canReply");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyLessThan(Integer value) {
+            addCriterion("can_reply <", value, "canReply");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyLessThanOrEqualTo(Integer value) {
+            addCriterion("can_reply <=", value, "canReply");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyIn(List<Integer> values) {
+            addCriterion("can_reply in", values, "canReply");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyNotIn(List<Integer> values) {
+            addCriterion("can_reply not in", values, "canReply");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyBetween(Integer value1, Integer value2) {
+            addCriterion("can_reply between", value1, value2, "canReply");
+            return (Criteria) this;
+        }
+
+        public Criteria andCanReplyNotBetween(Integer value1, Integer value2) {
+            addCriterion("can_reply not between", value1, value2, "canReply");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

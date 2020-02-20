@@ -96,11 +96,15 @@ public class UserController {
 			}
 			try{
 				subject.login(token);
+
+				User user1=new User();
+				user1.setLastTime(new Date());
+				user.setLastTime(user1.getLastTime());
+				user1.setId(user.getId());
+				userServiceImpl.userInfoUpload(user1);
+				log.info("登录成功");
 				session.setAttribute("user",user);
 				model.addAttribute("user",user);
-				user.setLastTime(new Date());
-				userServiceImpl.userInfoUpload(user);
-				log.info("登录成功");
 				resultDomain.setResultMsg("登录成功！");
 				resultDomain.setResultCode(1);
 				return resultDomain;
@@ -173,6 +177,7 @@ public class UserController {
 		user.setIdentity("普通用户");
 		user.setVipGrade(0);
 		user.setSpend(0);
+		user.setImage("/userImg/0.jpg");//设置默认头像
 		resultDomain=userServiceImpl.userAdd(user);
 		log.info(resultDomain.getResultMsg());
 			return resultDomain;
@@ -281,19 +286,18 @@ public class UserController {
 	public  String toUserHome(HttpServletRequest request,Model model,@RequestParam String name){
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("user");
+		User other;
 		if (user==null)
-			return "/login";
-		else {
-			if (user.getUserName()==name){
-				model.addAttribute("user",user);
+			return "redirect:/userManage/login";
+		else{
+			other=userServiceImpl.userFindByName(name).getResultData();
+			if (other==null)
+				other=userServiceImpl.userFindByNickname(name).getResultData();
+			if (user.getId()==other.getId()){//是当前用户的主页
+				other=user;
 			}
-			else{
-				User user2=userServiceImpl.userFindByName(name).getResultData();
-				if (user2==null)
-					user2=userServiceImpl.userFindByNickname(name).getResultData();
-				model.addAttribute("user",user2);
-
-			}
+			model.addAttribute("other",other);
+			model.addAttribute("user",user);
 		}
 		return "user/home";
 
@@ -452,16 +456,10 @@ public class UserController {
 	private  String toStart(HttpSession httpSession,Model model) {
 		log.info("主页");
 		User user=(User)httpSession.getAttribute("user");
-		List<Topic> topicsTop=topicServiceImpl.queryModuleTopic(null,null,null,0,1).getResultData();
-		List<Topic> topicsAll=topicServiceImpl.queryModuleTopic(null,null,null,0,0).getResultData();
+		List<Topic> topicsTop=topicServiceImpl.queryModuleTopic(null,null,null,0,1,null).getResultData();
+		List<Topic> topicsAll=topicServiceImpl.queryModuleTopic(null,null,null,0,0,10).getResultData();//查询第一页未置顶的帖子
 		model.addAttribute("topicsTop",topicsTop);
 		model.addAttribute("topicsAll",topicsAll);
-		for (Topic topic:topicsTop) {
-			System.out.println(topic);
-		}
-		for (Topic topic:topicsAll) {
-			System.out.println(topic);
-		}
 		if (user!=null){
 			log.info(user.toString());
 			model.addAttribute("user",user);
@@ -472,6 +470,7 @@ public class UserController {
 			model.addAttribute("user",user);
 			model.addAttribute("loginResult",-1);
 		}
-			return "index";
+		model.addAttribute("thisModule","all");
+		return "index";
 	}
 }

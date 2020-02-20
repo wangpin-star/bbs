@@ -9,7 +9,6 @@ import com.wangpin.bbs.topicManage.mapper.TopicMapper;
 import com.wangpin.bbs.topicManage.service.TopicService;
 import com.wangpin.bbs.utils.ResultDomain;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,10 +37,11 @@ public class TopicServiceImpl implements TopicService {
             resultDomain.setResultCode(1);
             resultDomain.setResultMsg("查询成功！");
             resultDomain.setResultData(replies);
+            log.info("查询回复成功");
         }catch (Exception e){
             resultDomain.setResultCode(-1);
             resultDomain.setResultMsg("查询失败！原因："+e.getCause());
-            return resultDomain;
+            log.info("查询回复失败，原因："+e.getCause());
         }finally {
             return resultDomain;
         }
@@ -60,10 +60,11 @@ public class TopicServiceImpl implements TopicService {
             int code=replyDao.insertSelective(reply);
             resultDomain.setResultCode(code);
             resultDomain.setResultMsg("回复成功！");
+            log.info("回复成功！");
         }catch (Exception e){
             resultDomain.setResultCode(-1);
             resultDomain.setResultMsg("回复失败！原因："+e.getCause());
-            return resultDomain;
+            log.info("回复失败，原因："+e.getCause());
         }finally {
             return resultDomain;
         }
@@ -81,10 +82,11 @@ public class TopicServiceImpl implements TopicService {
             int code=replyDao.deleteByPrimaryKey(replyId);
             resultDomain.setResultCode(code);
             resultDomain.setResultMsg("删除成功！");
+            log.info("删除回复成功");
         }catch (Exception e){
             resultDomain.setResultCode(-1);
             resultDomain.setResultMsg("删除失败！原因："+e.getCause());
-            return resultDomain;
+            log.info("删除回复失败，原因："+e.getCause());
         }finally {
             return resultDomain;
         }
@@ -102,10 +104,11 @@ public class TopicServiceImpl implements TopicService {
             int code=topicDao.insertSelective(topic);
             resultDomain.setResultCode(code);
             resultDomain.setResultMsg("发贴成功！");
+            log.info("发帖成功");
         }catch (Exception e){
             resultDomain.setResultCode(-1);
             resultDomain.setResultMsg("发帖失败！原因："+e.getCause());
-            return resultDomain;
+            log.info("发帖失败，原因："+e.getCause());
         }finally {
             return resultDomain;
         }
@@ -126,10 +129,29 @@ public class TopicServiceImpl implements TopicService {
             int code=topicDao.updateByPrimaryKeySelective(topic);
             resultDomain.setResultCode(code);
             resultDomain.setResultMsg("删除成功！");
+            log.info("删除贴子成功");
         }catch (Exception e){
             resultDomain.setResultCode(-1);
             resultDomain.setResultMsg("删除失败！原因："+e.getCause());
+            log.info("删除帖子失败，原因："+e.getCause());
+        }finally {
             return resultDomain;
+        }
+    }
+
+    @Override
+    public ResultDomain<Topic> queryTopicById(int id) {
+        ResultDomain resultDomain=new ResultDomain<>();
+        try {
+            Topic topic=topicDao.selectByPrimaryKey(id);
+            resultDomain.setResultCode(1);
+            resultDomain.setResultData(topic);
+            resultDomain.setResultMsg("查询成功！");
+            log.info("查询帖子成功！");
+        }catch (Exception e){
+            resultDomain.setResultCode(-1);
+            resultDomain.setResultMsg("删除失败！原因："+e.getCause());
+            log.info("查询帖子失败，原因："+e.getCause());
         }finally {
             return resultDomain;
         }
@@ -150,10 +172,11 @@ public class TopicServiceImpl implements TopicService {
             resultDomain.setResultCode(1);
             resultDomain.setResultData(topics);
             resultDomain.setResultMsg("查询成功！");
+            log.info("查询用户发布贴子成功");
         }catch (Exception e){
             resultDomain.setResultCode(-1);
-            resultDomain.setResultMsg("删除失败！原因："+e.getCause());
-            return resultDomain;
+            resultDomain.setResultMsg("查询失败！原因："+e.getCause());
+            log.info("查询用户发布帖子失败，原因："+e.getCause());
         }finally {
             return resultDomain;
         }
@@ -168,19 +191,49 @@ public class TopicServiceImpl implements TopicService {
      * @return
      */
     @Override
-    public ResultDomain<List<Topic>> queryModuleTopic(String moduleName,Integer end,Integer essence,int page,Integer top) {
+    public ResultDomain<List<Topic>> queryModuleTopic(String moduleName,Integer end,Integer essence,int page,int top ,Integer limit) {
         ResultDomain<List<Topic>> resultDomain=new ResultDomain<>();
-        int offset=page*10;
+        int offset=0;
+        if (limit!=null)
+            offset=page*limit;
         try {
-            List<Topic> topics=topicDao.selectByModuleNameOrTopicState(offset,moduleName,end,essence,top);
+            List<Topic> topics=topicDao.selectByModuleNameOrTopicState(offset,moduleName,end,essence,top,limit);
             resultDomain.setResultCode(1);
             resultDomain.setResultData(topics);
-            resultDomain.setResultMsg("查询成功！");
+            resultDomain.setResultMsg("查询帖子成功！");
 
         }catch (Exception e){
             resultDomain.setResultCode(-1);
-            resultDomain.setResultMsg("查询失败！原因："+e.getCause());
+            resultDomain.setResultMsg("查询帖子失败！原因："+e.getCause());
+        }finally {
             return resultDomain;
+        }
+    }
+
+    @Override
+    public int count(String moduleName, Integer end, Integer essence, int top) {
+        int count =-1;
+        try {
+            count=topicDao.count(moduleName,end,essence,top);
+            log.info("查询成功");
+        }catch (Exception e){
+            log.info("查询失败"+e.getMessage());
+        }finally {
+            return count;
+        }
+    }
+
+    @Override
+    public ResultDomain updateTopic(Topic topic) {
+        ResultDomain resultDomain=new ResultDomain<>();
+        try {
+            int code=topicDao.updateByPrimaryKeySelective(topic);
+            resultDomain.setResultCode(code);
+            resultDomain.setResultMsg("更新帖子成功！");
+        }catch (Exception e){
+            resultDomain.setResultCode(-1);
+            resultDomain.setResultMsg("更新帖子失败！原因："+e.getCause());
+            log.info(e.getMessage());
         }finally {
             return resultDomain;
         }

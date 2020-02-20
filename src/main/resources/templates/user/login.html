@@ -8,7 +8,8 @@
   <meta name="description" content="Java交流社区，致力于为web开发提供强劲动力">
   <link rel="stylesheet" href="/res/layui/css/layui.css">
   <link rel="stylesheet" href="/res/css/global.css">
-  <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="/res/js/jquery.min.js"></script>
+  <link rel="stylesheet" href="/res/font/font_download/iconfont.css">
   <script src="/res/layui/layui.js"></script>
 </head>
 <body>
@@ -19,10 +20,7 @@
     </a>
     <ul class="layui-nav fly-nav layui-hide-xs">
       <li class="layui-nav-item layui-this">
-        <a href="/"><i class="iconfont icon-jiaoliu"></i>交流</a>
-      </li>
-      <li class="layui-nav-item">
-        <a href="../case/case.html"><i class="iconfont icon-iconmingxinganli"></i>案例</a>
+        <a href="/"><i class="iconfont2 icon-shouye" style="font-size: 22px;top: -1px;"></i>首页</a>
       </li>
       <li class="layui-nav-item">
         <a href="http://www.layui.com/" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
@@ -119,7 +117,7 @@
           if (data.resultCode==1){
             layer.msg(data.resultMsg, {
               icon: 1,
-              time: 2000, //2秒关闭（如果不配置，默认是3秒）
+              time: 1000, //1秒关闭（如果不配置，默认是3秒）
               end:function () {
                 window.location.href="/userManage/main";//重定向到登录界面
               }

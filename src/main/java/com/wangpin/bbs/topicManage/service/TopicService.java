@@ -12,6 +12,11 @@ public interface TopicService {
     ResultDomain deleteReply(int replyId);
     ResultDomain addTopic(Topic topic);
     ResultDomain deleteTopic(int topicId);
+    ResultDomain<Topic> queryTopicById(int id);
     ResultDomain<List<Topic>> queryUserTopic(int userId);
-    ResultDomain<List<Topic>> queryModuleTopic(String moduleName,Integer end,Integer essence,int page,Integer top);
+    ResultDomain<List<Topic>> queryModuleTopic(String moduleName,Integer end,Integer essence,int page,int top,Integer limit);
+    int count(String moduleName,Integer end,Integer essence,int top);
+    ResultDomain updateTopic(Topic topic);
+
+
 }

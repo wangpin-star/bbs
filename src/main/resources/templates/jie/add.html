@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html  xmlns:th="http://www.thymeleaf.org" ><html>
+<html  xmlns:th="http://www.thymeleaf.org" >
 <head>
   <meta charset="utf-8">
   <title>发表问题 编辑问题 公用</title>
@@ -8,6 +8,7 @@
   <meta name="description" content="java社区，致力于为web开发提供强劲动力">
   <link rel="stylesheet" href="/res/layui/css/layui.css">
   <link rel="stylesheet" href="/res/css/global.css">
+  <link rel="stylesheet" href="/res/font/font_download/iconfont.css">
   <script src="/res/js/jquery.min.js"></script>
 </head>
 <body onunload="close()">
@@ -18,8 +19,8 @@
       <img src="/res/images/logo.png" alt="layui">
     </a>
     <ul class="layui-nav fly-nav layui-hide-xs">
-      <li class="layui-nav-item layui-this">
-        <a href="/"><i class="iconfont icon-jiaoliu"></i>交流</a>
+      <li class="layui-nav-item ">
+        <a href="/"><i class="iconfont2 icon-shouye" style="font-size: 22px;top: -1px;"></i>首页</a>
       </li>
       <li class="layui-nav-item">
         <a href="http://www.layui.com/" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
@@ -31,7 +32,8 @@
       <li class="layui-nav-item login" th:if="${user!=null}">
         <a class="fly-nav-avatar" href="javascript:;">
           <cite class="layui-hide-xs" th:text="${user?.nickname}"></cite>
-          <i class="iconfont icon-renzheng layui-hide-xs" th:if="${user.identity=='会员'}" th:title="'认证信息：'+(${user.identity=='会员'} ? ${user.identity}:'无')"></i>
+          <i style="color:#17abe3" class="iconfont2 icon-VIP" th:if="${user.identity=='会员'}" th:title="'认证信息：'+(${user.identity})"></i>
+          <i style="" class="iconfont2 icon-guanliyuan" th:if="${user.identity=='管理员'}" th:title="'认证信息：'+(${user.identity})"></i>
           <div th:if="${user.identity=='会员'}" style="display: inline-block;">
             <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="'VIP'+${user.vipGrade}"></i>
           </div>
@@ -48,7 +50,6 @@
           <dd><a href="/userManage/logout/" style="text-align: center;">退出</a></dd>
         </dl>
       </li>
-
     </ul>
   </div>
 </div>
@@ -208,35 +209,18 @@ layui.use(['form', 'laydate'], function(){
 
   var _t;
   var cancel= 0;
-  window.onbeforeunload = function(){
-    if (hasSubmit==0&&hasUploadImg==1){//文件上传了但是为提交表单
-      // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9
+  window.onbeforeunload= function(){
+    if (hasSubmit==0&&hasUploadImg==1){//文件上传了但是未提交表单
         deletefile();
     }
   }
-  window.onunloadcancel = function(){
-    clearTimeout(_t);
-    cancel=1//用户取消离开页面，取消删除
-    alert("取消离开");
-  }
 
-  // window.onbeforeunload = event => {
-  //   console.log('onbeforeload！！！！！')
-  //   if (hasSubmit==0&&hasUploadImg==1){//文件上传了但是为提交表单
-  //     // Chrome, Safari, Firefox 4+, Opera 12+ , IE 9+
-  //     console.log(event.isTrusted);
-  //     deletefile();
-  //     return '关闭提示';
-  //   }
-  // }
-  function close(){
-    console.log('onbeforeload！！！！！')
-  }
   var hasSubmit=0;
   form.on('submit(*)', function(data){
     console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
     console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
     console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+    return false;
     if (!validator()){
       layer.msg('答案错误，请重新提交', {
         icon: 5,
@@ -254,12 +238,13 @@ layui.use(['form', 'laydate'], function(){
         console.log(data);
         if (data.resultCode>=1){
           hasSubmit=1;
-          $("#btn").attr('disabled',true);
+          $("#submit").attr('disabled',true);
           $("#submit").addClass("layui-btn-disabled");
           layer.msg(data.resultMsg, {
             icon: 1,
+            time:1000,
             end:function () {
-              window.location.href="/topicManage/toAddTopic";//重定向到登录界面
+              window.location.reload();//重定向到登录界面
             }
           });
 

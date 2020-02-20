@@ -11,6 +11,10 @@
     <result column="topic_id" jdbcType="INTEGER" property="topicId" />
     <result column="to_user_id" jdbcType="INTEGER" property="toUserId" />
     <result column="time" jdbcType="TIMESTAMP" property="time" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="to_user_name" jdbcType="VARCHAR" property="toUserName" />
+    <result column="topic_title" jdbcType="VARCHAR" property="topicTitle" />
+    <result column="accept" jdbcType="INTEGER" property="accept" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--@mbg.generated-->
@@ -74,7 +78,8 @@
   </sql>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, user_id, content, father_id, topic_id, to_user_id, `time`
+    id, user_id, content, father_id, topic_id, to_user_id, `time`, user_name, to_user_name, 
+    topic_title, accept
   </sql>
   <select id="selectByExample" parameterType="com.wangpin.bbs.topicManage.bean.ReplyExample" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -113,11 +118,13 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wangpin.bbs.topicManage.bean.Reply" useGeneratedKeys="true">
     <!--@mbg.generated-->
     insert into reply (user_id, content, father_id, 
-      topic_id, to_user_id, `time`
-      )
+      topic_id, to_user_id, `time`, 
+      user_name, to_user_name, topic_title, 
+      accept)
     values (#{userId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{fatherId,jdbcType=INTEGER}, 
-      #{topicId,jdbcType=INTEGER}, #{toUserId,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP}
-      )
+      #{topicId,jdbcType=INTEGER}, #{toUserId,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP}, 
+      #{userName,jdbcType=VARCHAR}, #{toUserName,jdbcType=VARCHAR}, #{topicTitle,jdbcType=VARCHAR}, 
+      #{accept,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wangpin.bbs.topicManage.bean.Reply" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -141,6 +148,18 @@
       <if test="time != null">
         `time`,
       </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="toUserName != null">
+        to_user_name,
+      </if>
+      <if test="topicTitle != null">
+        topic_title,
+      </if>
+      <if test="accept != null">
+        accept,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userId != null">
@@ -160,6 +179,18 @@
       </if>
       <if test="time != null">
         #{time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="toUserName != null">
+        #{toUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="topicTitle != null">
+        #{topicTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="accept != null">
+        #{accept,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -195,6 +226,18 @@
       <if test="record.time != null">
         `time` = #{record.time,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.userName != null">
+        user_name = #{record.userName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.toUserName != null">
+        to_user_name = #{record.toUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.topicTitle != null">
+        topic_title = #{record.topicTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.accept != null">
+        accept = #{record.accept,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -209,7 +252,11 @@
       father_id = #{record.fatherId,jdbcType=INTEGER},
       topic_id = #{record.topicId,jdbcType=INTEGER},
       to_user_id = #{record.toUserId,jdbcType=INTEGER},
-      `time` = #{record.time,jdbcType=TIMESTAMP}
+      `time` = #{record.time,jdbcType=TIMESTAMP},
+      user_name = #{record.userName,jdbcType=VARCHAR},
+      to_user_name = #{record.toUserName,jdbcType=VARCHAR},
+      topic_title = #{record.topicTitle,jdbcType=VARCHAR},
+      accept = #{record.accept,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -236,6 +283,18 @@
       <if test="time != null">
         `time` = #{time,jdbcType=TIMESTAMP},
       </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="toUserName != null">
+        to_user_name = #{toUserName,jdbcType=VARCHAR},
+      </if>
+      <if test="topicTitle != null">
+        topic_title = #{topicTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="accept != null">
+        accept = #{accept,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -247,7 +306,11 @@
       father_id = #{fatherId,jdbcType=INTEGER},
       topic_id = #{topicId,jdbcType=INTEGER},
       to_user_id = #{toUserId,jdbcType=INTEGER},
-      `time` = #{time,jdbcType=TIMESTAMP}
+      `time` = #{time,jdbcType=TIMESTAMP},
+      user_name = #{userName,jdbcType=VARCHAR},
+      to_user_name = #{toUserName,jdbcType=VARCHAR},
+      topic_title = #{topicTitle,jdbcType=VARCHAR},
+      accept = #{accept,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

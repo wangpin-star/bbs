@@ -93,6 +93,16 @@ public class Topic {
      */
     private Integer gold;
 
+    /**
+     * 用户头像
+     */
+    private String userimg;
+
+    /**
+     * 是否可以回复
+     */
+    private Integer canReply;
+
     public Integer getId() {
         return id;
     }
@@ -237,6 +247,22 @@ public class Topic {
         this.gold = gold;
     }
 
+    public String getUserimg() {
+        return userimg;
+    }
+
+    public void setUserimg(String userimg) {
+        this.userimg = userimg;
+    }
+
+    public Integer getCanReply() {
+        return canReply;
+    }
+
+    public void setCanReply(Integer canReply) {
+        this.canReply = canReply;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -261,6 +287,8 @@ public class Topic {
         sb.append(", essence=").append(essence);
         sb.append(", readNum=").append(readNum);
         sb.append(", gold=").append(gold);
+        sb.append(", userimg=").append(userimg);
+        sb.append(", canReply=").append(canReply);
         sb.append("]");
         return sb.toString();
     }
@@ -294,7 +322,9 @@ public class Topic {
                 && (this.getEnd() == null ? other.getEnd() == null : this.getEnd().equals(other.getEnd()))
                 && (this.getEssence() == null ? other.getEssence() == null : this.getEssence().equals(other.getEssence()))
                 && (this.getReadNum() == null ? other.getReadNum() == null : this.getReadNum().equals(other.getReadNum()))
-                && (this.getGold() == null ? other.getGold() == null : this.getGold().equals(other.getGold()));
+                && (this.getGold() == null ? other.getGold() == null : this.getGold().equals(other.getGold()))
+                && (this.getUserimg() == null ? other.getUserimg() == null : this.getUserimg().equals(other.getUserimg()))
+                && (this.getCanReply() == null ? other.getCanReply() == null : this.getCanReply().equals(other.getCanReply()));
     }
 
     @Override
@@ -319,6 +349,8 @@ public class Topic {
         result = prime * result + ((getEssence() == null) ? 0 : getEssence().hashCode());
         result = prime * result + ((getReadNum() == null) ? 0 : getReadNum().hashCode());
         result = prime * result + ((getGold() == null) ? 0 : getGold().hashCode());
+        result = prime * result + ((getUserimg() == null) ? 0 : getUserimg().hashCode());
+        result = prime * result + ((getCanReply() == null) ? 0 : getCanReply().hashCode());
         return result;
     }
 }

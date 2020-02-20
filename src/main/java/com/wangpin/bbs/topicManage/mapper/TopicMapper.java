@@ -28,5 +28,7 @@ public interface TopicMapper {
 
     int updateByPrimaryKey(Topic record);
 
-    List<Topic> selectByModuleNameOrTopicState(@Param("offset") int offset, @Param("moduleName") String moduleName, @Param("end") Integer end, @Param("essence") Integer essence, @Param("top") Integer top);
+    List<Topic> selectByModuleNameOrTopicState(@Param("offset") int offset, @Param("moduleName") String moduleName, @Param("end") Integer end, @Param("essence") Integer essence, @Param("top") Integer top, @Param("limit") Integer limit);
+
+    int count(@Param("moduleName") String moduleName, @Param("end") Integer end, @Param("essence") Integer essence, @Param("top") Integer top);
 }

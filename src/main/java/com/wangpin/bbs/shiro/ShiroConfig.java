@@ -86,10 +86,15 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/userManage/toRegist", "anon");
         filterChainDefinitionMap.put("/userManage/userRegist", "anon");
         filterChainDefinitionMap.put("/userManage/login/authen", "anon");
+        filterChainDefinitionMap.put("/topicManage/column", "anon");
+        filterChainDefinitionMap.put("/topicManage/toDetail", "anon");
         filterChainDefinitionMap.put("/res/css/**", "anon");
         filterChainDefinitionMap.put("/res/mods/**", "anon");
+        filterChainDefinitionMap.put("/res/font/**", "anon");
         filterChainDefinitionMap.put("/res/layui/**", "anon");
         filterChainDefinitionMap.put("/res/images/**", "anon");
+        filterChainDefinitionMap.put("/topicImg/**", "anon");
+        filterChainDefinitionMap.put("/userImg/**", "anon");
         filterChainDefinitionMap.put("/res/js/**", "anon");
         //logout是shiro提供的过滤器
         filterChainDefinitionMap.put("/userManage/main", "anon");

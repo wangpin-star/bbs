@@ -4,39 +4,59 @@ import java.util.Date;
 
 public class Reply {
     /**
-    * 回复id
-    */
+     * 回复id
+     */
     private Integer id;
 
     /**
-    * 回复人id
-    */
+     * 回复人id
+     */
     private Integer userId;
 
     /**
-    * 回复内容
-    */
+     * 回复内容
+     */
     private String content;
 
     /**
-    * 父回复
-    */
+     * 父回复
+     */
     private Integer fatherId;
 
     /**
-    * 帖子id
-    */
+     * 帖子id
+     */
     private Integer topicId;
 
     /**
-    * 回复人id
-    */
+     * 被回复人id
+     */
     private Integer toUserId;
 
     /**
-    * 回复时间
-    */
+     * 回复时间
+     */
     private Date time;
+
+    /**
+     * 回复人姓名
+     */
+    private String userName;
+
+    /**
+     * 被回复人姓名
+     */
+    private String toUserName;
+
+    /**
+     * 回复贴的标题
+     */
+    private String topicTitle;
+
+    /**
+     * 是否采纳
+     */
+    private Integer accept;
 
     public Integer getId() {
         return id;
@@ -94,6 +114,38 @@ public class Reply {
         this.time = time;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getToUserName() {
+        return toUserName;
+    }
+
+    public void setToUserName(String toUserName) {
+        this.toUserName = toUserName;
+    }
+
+    public String getTopicTitle() {
+        return topicTitle;
+    }
+
+    public void setTopicTitle(String topicTitle) {
+        this.topicTitle = topicTitle;
+    }
+
+    public Integer getAccept() {
+        return accept;
+    }
+
+    public void setAccept(Integer accept) {
+        this.accept = accept;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -107,6 +159,10 @@ public class Reply {
         sb.append(", topicId=").append(topicId);
         sb.append(", toUserId=").append(toUserId);
         sb.append(", time=").append(time);
+        sb.append(", userName=").append(userName);
+        sb.append(", toUserName=").append(toUserName);
+        sb.append(", topicTitle=").append(topicTitle);
+        sb.append(", accept=").append(accept);
         sb.append("]");
         return sb.toString();
     }
@@ -124,12 +180,16 @@ public class Reply {
         }
         Reply other = (Reply) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
-            && (this.getContent() == null ? other.getContent() == null : this.getContent().equals(other.getContent()))
-            && (this.getFatherId() == null ? other.getFatherId() == null : this.getFatherId().equals(other.getFatherId()))
-            && (this.getTopicId() == null ? other.getTopicId() == null : this.getTopicId().equals(other.getTopicId()))
-            && (this.getToUserId() == null ? other.getToUserId() == null : this.getToUserId().equals(other.getToUserId()))
-            && (this.getTime() == null ? other.getTime() == null : this.getTime().equals(other.getTime()));
+                && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
+                && (this.getContent() == null ? other.getContent() == null : this.getContent().equals(other.getContent()))
+                && (this.getFatherId() == null ? other.getFatherId() == null : this.getFatherId().equals(other.getFatherId()))
+                && (this.getTopicId() == null ? other.getTopicId() == null : this.getTopicId().equals(other.getTopicId()))
+                && (this.getToUserId() == null ? other.getToUserId() == null : this.getToUserId().equals(other.getToUserId()))
+                && (this.getTime() == null ? other.getTime() == null : this.getTime().equals(other.getTime()))
+                && (this.getUserName() == null ? other.getUserName() == null : this.getUserName().equals(other.getUserName()))
+                && (this.getToUserName() == null ? other.getToUserName() == null : this.getToUserName().equals(other.getToUserName()))
+                && (this.getTopicTitle() == null ? other.getTopicTitle() == null : this.getTopicTitle().equals(other.getTopicTitle()))
+                && (this.getAccept() == null ? other.getAccept() == null : this.getAccept().equals(other.getAccept()));
     }
 
     @Override
@@ -143,6 +203,10 @@ public class Reply {
         result = prime * result + ((getTopicId() == null) ? 0 : getTopicId().hashCode());
         result = prime * result + ((getToUserId() == null) ? 0 : getToUserId().hashCode());
         result = prime * result + ((getTime() == null) ? 0 : getTime().hashCode());
+        result = prime * result + ((getUserName() == null) ? 0 : getUserName().hashCode());
+        result = prime * result + ((getToUserName() == null) ? 0 : getToUserName().hashCode());
+        result = prime * result + ((getTopicTitle() == null) ? 0 : getTopicTitle().hashCode());
+        result = prime * result + ((getAccept() == null) ? 0 : getAccept().hashCode());
         return result;
     }
 }

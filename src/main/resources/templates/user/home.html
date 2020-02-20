@@ -9,6 +9,7 @@
   <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
   <link rel="stylesheet" href="/res/layui/css/layui.css">
   <link rel="stylesheet" href="/res/css/global.css">
+  <link rel="stylesheet" href="/res/font/font_download/iconfont.css">
   <script src="/res/js/jquery.min.js"></script>
 </head>
 <body style="margin-top: 65px;">
@@ -20,8 +21,8 @@
         <img src="/res/images/logo.png" alt="layui">
       </a>
       <ul class="layui-nav fly-nav layui-hide-xs">
-        <li class="layui-nav-item layui-this">
-          <a href="/"><i class="iconfont icon-jiaoliu"></i>交流</a>
+        <li class="layui-nav-item">
+          <a href="/"><i class="iconfont2 icon-shouye" style="font-size: 22px;top: -1px;"></i>首页</a>
         </li>
         <li class="layui-nav-item">
           <a href="http://www.layui.com/" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
@@ -33,7 +34,8 @@
         <li class="layui-nav-item login" th:if="${user!=null}">
           <a class="fly-nav-avatar" href="javascript:;">
             <cite class="layui-hide-xs" th:text="${user?.nickname}"></cite>
-            <i class="iconfont icon-renzheng layui-hide-xs" th:if="${user.identity=='会员'}" th:title="'认证信息：'+(${user.identity=='会员'} ? ${user.identity}:'无')"></i>
+            <i style="color:#17abe3" class="iconfont2 icon-VIP" th:if="${user.identity=='会员'}" th:title="'认证信息：'+(${user.identity})"></i>
+            <i style="" class="iconfont2 icon-guanliyuan" th:if="${user.identity=='管理员'}" th:title="'认证信息：'+(${user.identity})"></i>
             <div th:if="${user.identity=='会员'}" style="display: inline-block;">
               <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="'VIP'+${user.vipGrade}"></i>
             </div>
@@ -55,14 +57,15 @@
   </div>
 <div class="bg">
   <div class="fly-home fly-panel">
-    <img th:src="${user.image} ?:'/res/images/avatar/0.jpg'" th:alt="${user.userName}" style="margin-left: 5px;">
-    <i class="iconfont icon-renzheng" title="java社区认证" th:if="${user.identity=='会员'}"></i>
+    <img th:src="${other.image} ?:'/res/images/avatar/0.jpg'" th:alt="${other.nickname}" style="margin-left: 40px;">
+    <i style="color:#17abe3;font-size:30px" class="iconfont2 icon-VIP" th:if="${other.identity=='会员'}" th:title="'认证信息：'+(${other.identity})"></i>
+    <i style="font-size: 30px" class="iconfont2 icon-guanliyuan" th:if="${other.identity=='管理员'}" th:title="'认证信息：'+(${other.identity})"></i>
     <h1>
-      <p th:text="${user.userName}"></p>
-      <i th:class="${user.sex==0}?'iconfont icon-nan':'iconfont icon-nv'"></i>
+      <p th:text="${other.nickname}"></p>
+      <i th:class="${other.sex==0}?'iconfont icon-nan':'iconfont icon-nv'"></i>
       <!-- <i class="iconfont icon-nv"></i>  -->
-      <div th:if="${user.identity=='会员'}">
-        <i class="layui-badge fly-badge-vip" th:text="'VIP'+${user.vipGrade}"></i>
+      <div th:if="${other.identity=='会员'}">
+        <i class="layui-badge fly-badge-vip" th:text="'VIP'+${other.vipGrade}"></i>
       </div>
       <!--
       <span style="color:#c00;">（管理员）</span>
@@ -71,18 +74,18 @@
       -->
     </h1>
 
-    <p style="padding: 10px 0; color: #5FB878;" th:text="'认证信息: '+${user.identity}"></p>
+    <p style="padding: 10px 0; color: #5FB878;" th:text="'认证信息: '+${other.identity}"></p>
 
     <p class="fly-home-info">
-      <i class="iconfont icon-kiss" title="金币"></i><span style="color: #FF7200;" th:text="${user.gold}"></span>
-      <i class="iconfont icon-shijian"></i><span th:text="${#calendars.format(user.registTime,'yyyy-MM-dd HH:mm:ss')}+'加入'"></span>
-      <i class="iconfont icon-chengshi"></i><span th:text="'来自 '+(${user.city}?:'未知')"></span>
+      <i class="iconfont2 icon-jinbi" title="金币"></i><span style="color: #FF7200;" th:text="${other.gold}"></span>
+      <i class="iconfont icon-shijian"></i><span th:text="${#calendars.format(other.registTime,'yyyy-MM-dd HH:mm:ss')}+'加入'"></span>
+      <i class="iconfont icon-chengshi"></i><span th:text="'来自 '+(${other.city}?:'未知')"></span>
     </p>
 
-    <p class="fly-home-sign" th:text="'个性签名： '+(${user.signature}?:'_')" ></p>
+    <p class="fly-home-sign" th:text="'个性签名： '+(${other.signature}?:'_')" ></p>
 
-    <div class="fly-sns" data-user="">
-      <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend">加为好友</a>
+    <div class="fly-sns" data-user="" th:if="${user.id!=other.id}">
+      <a href="javascript:;" class="layui-btn layui-btn-primary fly-imActive" data-type="addFriend" >加为好友</a>
       <a href="javascript:;" class="layui-btn layui-btn-normal fly-imActive" data-type="chat">发起会话</a>
     </div>
 
@@ -92,7 +95,7 @@
     <div class="layui-row layui-col-space15">
       <div class="layui-col-md6 fly-home-jie">
         <div class="fly-panel">
-          <h3 class="fly-panel-title">贤心 最近的提问</h3>
+          <h3 class="fly-panel-title" th:text="${other.nickname}+' 最近的提问'"></h3>
           <ul class="jie-row">
             <li>
               <span class="fly-jing">精</span>
@@ -108,7 +111,7 @@
 
       <div class="layui-col-md6 fly-home-da">
         <div class="fly-panel">
-          <h3 class="fly-panel-title">贤心 最近的回答</h3>
+          <h3 class="fly-panel-title" th:text="${other.nickname}+' 最近的回答'"></h3>
           <ul class="home-jieda">
             <li>
               <p>

@@ -10,6 +10,8 @@
   <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
   <link rel="stylesheet" href="/res/layui/css/layui.css">
   <link rel="stylesheet" href="/res/css/global.css">
+  <link rel="stylesheet" href="/res/font/font_download/iconfont.css">
+  <script src="/res/js/jquery.min.js"></script>
 </head>
 <body>
 
@@ -19,11 +21,8 @@
       <img src="/res/images/logo.png" alt="layui">
     </a>
     <ul class="layui-nav fly-nav">
-      <li class="layui-nav-item layui-this">
-        <a href="/"><i class="iconfont icon-jiaoliu"></i>交流</a>
-      </li>
       <li class="layui-nav-item">
-        <a href="/res/case/case.html"><i class="iconfont icon-iconmingxinganli"></i>案例</a>
+        <a href="/"><i class="iconfont2 icon-shouye" style="font-size: 22px;top: -1px;"></i>首页</a>
       </li>
       <li class="layui-nav-item">
         <a href="http://www.layui.com/" target="_blank"><i class="iconfont icon-ui"></i>框架</a>
@@ -47,7 +46,8 @@
       <li class="layui-nav-item login" th:if="${user!=null}">
         <a class="fly-nav-avatar" href="javascript:;">
           <cite class="layui-hide-xs" th:text="${user?.nickname}"></cite>
-          <i class="iconfont icon-renzheng layui-hide-xs" th:if="${user.identity=='会员'}" th:title="'认证信息：'+(${user.identity=='会员'} ? ${user.identity}:'无')"></i>
+          <i style="color:#17abe3" class="iconfont2 icon-VIP" th:if="${user.identity=='会员'}" th:title="'认证信息：'+(${user.identity})"></i>
+          <i style="" class="iconfont2 icon-guanliyuan" th:if="${user.identity=='管理员'}" th:title="'认证信息：'+(${user.identity})"></i>
           <div th:if="${user.identity=='会员'}" style="display: inline-block;">
             <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="'VIP'+${user.vipGrade}"></i>
           </div>
@@ -72,17 +72,16 @@
   <div class="layui-container">
     <ul class="layui-clear">
       <li class="layui-hide-xs"><a href="/">首页</a></li> 
-      <li class="layui-this"><a href="">提问</a></li> 
-      <li><a href="">分享<span class="layui-badge-dot"></span></a></li> 
-      <li><a href="">讨论</a></li> 
-      <li><a href="">建议</a></li> 
-      <li><a href="">公告</a></li> 
-      <li><a href="">动态</a></li> 
+      <li class="layui-this module"><a th:href="@{/topicManage/column(moduleName='提问')}">提问</a></li>
+      <li class="module"><a th:href="@{/topicManage/column(moduleName='分享')}">分享<span class="layui-badge-dot"></span></a></li>
+      <li class="module"><a th:href="@{/topicManage/column(moduleName='讨论')}">讨论</a></li>
+      <li class="module"><a th:href="@{/topicManage/column(moduleName='建议')}">建议</a></li>
+      <li class="module"><a th:href="@{/topicManage/column(moduleName='公告')}">公告</a></li>
       <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><span class="fly-mid"></span></li> 
       
       <!-- 用户登入后显示 -->
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="../user/index.html">我发表的贴</a></li> 
-      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block"><a href="../user/index.html#collection">我收藏的贴</a></li> 
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block" style="display: none"><a href="/userManage/index">我发表的贴</a></li>
+      <li class="layui-hide-xs layui-hide-sm layui-show-md-inline-block" style="display: none"><a href="/userManage/index">我收藏的贴</a></li>
     </ul>
 
     <div class="fly-column-right layui-hide-xs">
@@ -101,13 +100,13 @@
       <div class="fly-panel" style="margin-bottom: 0;">
         
         <div class="fly-panel-title fly-filter">
-          <a href="" class="layui-this">综合</a>
+          <a th:href="@{/topicManage/column(moduleName=${thisModule})}" class="layui-this category">综合</a>
           <span class="fly-mid"></span>
-          <a href="">未结</a>
+          <a th:href="@{/topicManage/column(moduleName=${thisModule},category='未结')}" class="category">未结</a>
           <span class="fly-mid"></span>
-          <a href="">已结</a>
+          <a th:href="@{/topicManage/column(moduleName=${thisModule},category='已结')}" class="category">已结</a>
           <span class="fly-mid"></span>
-          <a href="">精华</a>
+          <a th:href="@{/topicManage/column(moduleName=${thisModule},category='精贴')}" class="category">精贴</a>
           <span class="fly-filter-right layui-hide-xs">
             <a href="" class="layui-this">按最新</a>
             <span class="fly-mid"></span>
@@ -116,47 +115,52 @@
         </div>
 
         <ul class="fly-list">
-          <li>
-            <a href="user/home.html" class="fly-avatar">
-              <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" alt="贤心">
+          <li th:each="topic : ${topics}">
+            <a th:href="@{/userManage/home(name=${topic?.ownerName})}" class="fly-avatar">
+              <img th:src="${topic?.userimg}"  th:alt="${topic?.ownerName}">
             </a>
             <h2>
-              <a class="layui-badge">动态</a>
-              <a href="detail.html">基于 layui 的极简社区页面模版</a>
+              <a class="layui-badge" th:text="${topic?.moduleName}"></a>
+              <a th:href="@{/topicManage/toDetail(id=${topic?.id})}" th:text="${topic?.title}"></a>
             </h2>
             <div class="fly-list-info">
-              <a href="user/home.html" link>
-                <cite>贤心</cite>
-                <!--<i class="iconfont icon-renzheng" title="认证信息：XXX"></i>-->
-                <i class="layui-badge fly-badge-vip">VIP3</i>
+              <a th:href="@{/userManage/home(name=${topic?.ownerName})}" link>
+                <cite th:text="${topic?.ownerName}"></cite>
+                <!--                <i class="iconfont icon-renzheng" title="认证信息"></i>-->
+                <!--                <i class="layui-badge fly-badge-vip">VIP3</i>-->
               </a>
-              <span>刚刚</span>
-              
-              <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻"><i class="iconfont icon-kiss"></i> 60</span>
-              <span class="layui-badge fly-badge-accept layui-hide-xs">已结</span>
-              <span class="fly-list-nums"> 
-                <i class="iconfont icon-pinglun1" title="回答"></i> 66
+              <span th:text="${#calendars.format(topic.createTime,'yyyy-MM-dd HH:mm:ss')}+' 发布'"></span>
+
+              <span class="fly-list-kiss layui-hide-xs" title="悬赏金币"><i class="iconfont2 icon-jinbi"><span  th:text="${topic?.gold}"></span></i> </span>
+              <span class="layui-badge fly-badge-accept layui-hide-xs" th:text="${topic?.ownerName==1}?'已结':'未结'"></span>
+              <span class="fly-list-nums"  style="margin-top: 2px;text-align: center;">
+                <i class="iconfont2 icon-pinglun" title="回答"></i>
+                <span  th:text="${topic?.replyNum}"></span>
               </span>
             </div>
             <div class="fly-list-badge">
-              <span class="layui-badge layui-bg-black">置顶</span>
-              <span class="layui-badge layui-bg-red">精帖</span>
+              <span class="layui-badge layui-bg-black" th:if="${topic?.top==1}">置顶</span>
+              <span class="layui-badge layui-bg-red" th:if="${topic?.essence==1}">精帖</span>
             </div>
           </li>
         </ul>
         
-        <!-- <div class="fly-none">没有相关数据</div> -->
+         <div th:if="${topics.size()==0}" class="fly-none">没有相关数据(不包含置顶帖子)</div>
     
         <div style="text-align: center">
           <div class="laypage-main">
-            <span class="laypage-curr">1</span>
-            <a href="/jie/page/2/">2</a>
-            <a href="/jie/page/3/">3</a>
-            <a  th:href="@{/userManage/home(name=${user?.userName})}">4</a>
-            <a href="/jie/page/5/">5</a>
-            <span>…</span>
-            <a href="/jie/page/148/" class="laypage-last" title="尾页">尾页</a>
-            <a href="/jie/page/2/" class="laypage-next">下一页</a>
+            <a  th:href="@{/topicManage/column(moduleName=${thisModule},page=${thisPage}-1,category=${category})}" th:if="${thisPage>3}">上一页</a>
+            <a  th:href="@{/topicManage/column(moduleName=${thisModule},page=0,category=${category})}" th:if="${thisPage>=0}">首页</a>
+            <a  href ="javascript:return false;" th:if="${thisPage>3}">...</a>
+            <a th:class="${thisPage==page}?'laypage-curr':'_'"
+               th:href="@{/topicManage/column(moduleName=${thisModule},page=${page},category=${category})}"
+               th:style="${thisPage==page} ? 'pointer-events: none;' : '_'"
+               th:each="page:${pageResult}" th:if="${page}>=0" th:text="${page}+1"></a>
+            <a  href ="javascript:return false;" th:if="(${totalPage}>4) and (${totalPage}-${thisPage}>=3)">...</a>
+            <a th:href="@{/topicManage/column(moduleName=${thisModule},page=${totalPage}-2,category=${category})}"
+               th:if="${totalPage}-${thisPage}>=3" class="laypage-last" title="尾页">尾页</a>
+            <a th:href="@{/topicManage/column(moduleName=${thisModule},page=${thisPage}+1,category=${category})}"
+               th:if="${totalPage}-${thisPage}>0" class="laypage-next">下一页</a>
           </div>
         </div>
 
@@ -222,6 +226,38 @@ layui.config({
 }).extend({
   fly: 'index'
 }).use('fly');
+
+layui.use(['form', 'laydate'], function() {
+  var form = layui.form
+          , layer = layui.layer
+          , laydate = layui.laydate;
+  var loginResult=[[${loginResult}]];
+  if (loginResult==1){
+    $(".unlogin").css("display","none")
+    $(".login").css("disply","inline-block")
+  }
+  if (loginResult==-1){
+    $(".login").css("display","none")
+    $(".unlogin").css("disply","inline-block")
+  }
+  var thisModule="[[${thisModule}]]";
+  var category="[[${category}]]";
+  $(".module").each(function(){
+    $(this).removeClass("layui-this");
+    if ($(this).text()==thisModule){
+      $(this).addClass("layui-this");
+    }
+  });
+
+  $(".category").each(function(){
+    $(this).removeClass("layui-this");
+    if ($(this).text()==category){
+      $(this).addClass("layui-this");
+    }
+  });
+
+});
+
 </script>
 
 </body>

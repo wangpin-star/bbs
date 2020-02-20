@@ -6,13 +6,12 @@ import com.wangpin.bbs.userManage.bean.User;
 import com.wangpin.bbs.userManage.service.implement.UserServiceImpl;
 import com.wangpin.bbs.utils.ResultDomain;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,10 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -160,6 +156,7 @@ public class TopicController {
             topic.setOwnerId(user.getId());
             topic.setOwnerName(user.getNickname());
             topic.setModuleName(module_name[topic.getModuleId()]);
+            topic.setUserimg(user.getImage());
             return resultDomain=topicServiceImpl.addTopic(topic);
 
         }
@@ -169,14 +166,126 @@ public class TopicController {
     }
 
     @RequestMapping({"/column"})
-    @ResponseBody
-    public ResultDomain getAllTopic(Model model, HttpServletRequest request,int page,int moduleId) {
+    public String getAllTopic(Model model, HttpServletRequest request, @RequestParam(value ="page",defaultValue ="0") int page, String moduleName,@RequestParam(value ="category",defaultValue ="综合") String category) {
         HttpSession session=request.getSession();
         User user= (User) session.getAttribute("user");
-        ResultDomain resultDomain=new ResultDomain();
-        resultDomain.setResultMsg("非法操作！请登录后重试！");
-        resultDomain.setResultCode(-1);
+        Integer end = null;
+        Integer essence = null;
+        String moduleName1="all";
+        if (moduleName.equalsIgnoreCase("all"))
+            moduleName=null;
+        else
+            moduleName1=moduleName;
+        if (category.compareToIgnoreCase("综合")==0){
+           end=null;
+           essence=null;
+        }
+        if (category.compareToIgnoreCase("已结")==0){
+            end=1;
+        }
+        if (category.compareToIgnoreCase("未结")==0){
+            end=0;
+        }
+        if (category.compareToIgnoreCase("精贴")==0){
+            essence=1;
+        }
+        if (user!=null){
+            log.info(user.toString());
+            model.addAttribute("user",user);
+            model.addAttribute("loginResult",1);
+        }
+        else {
+            log.info("未登录！");
+            model.addAttribute("user",user);
+            model.addAttribute("loginResult",-1);
+        }
+        String[] pages=new String[9];
+        int totalPage=topicServiceImpl.count(moduleName,end,essence,0)/10+1;
+        int[] pageResult={-1,-1,-1,-1,-1};
+        if (page>totalPage-1)
+            page=totalPage-1;
+        if (page<0)
+            page=0;
+        int remainingPages=totalPage-page;
+        if (page<4&&totalPage<=4)
+            for (int i=0;i<totalPage;i++) {
+                pageResult[i]=i;
+            }
+        if (page<4&&totalPage>4)
+            for (int i=0;i<pageResult.length;i++) {
+                pageResult[i]=i;
+            }
+        if (page>=4&&remainingPages>2)
+            for (int i=0;i<pageResult.length;i++) {
+                pageResult[i]=page+(i-2);//-2 -1 0 1 2
+            }
+        if (page>=4&&remainingPages<=2)
+            for (int i=0;i<pageResult.length;i++) {
+                pageResult[i]=totalPage-(4-i)-1;//-2 -1 0 1 2
+            }
+        List<Topic> topics=topicServiceImpl.queryModuleTopic(moduleName,end,essence,page,0,10).getResultData();//page从0开始
+        log.info("当前页面："+page);
+        log.info("总页面："+totalPage);
+        model.addAttribute("pageResult",pageResult);
+        model.addAttribute("thisModule",moduleName1);
+        model.addAttribute("category",category);
+        model.addAttribute("topics",topics);
+        model.addAttribute("thisPage",page);
+        model.addAttribute("totalPage",totalPage);
+        return "/jie/index";
+    }
+
+    @RequestMapping({"/toDetail"})
+    public String toTopicDetail(Model model, HttpServletRequest request, @RequestParam(value ="id") int id){
+        Topic topic =topicServiceImpl.queryTopicById(id).getResultData();
+        if (topic==null){
+            model.addAttribute("msg","查询的帖子不存在");
+            return "/other/404";
+        }
+        Topic topic2=new Topic();
+        topic2.setId(topic.getId());
+        topic2.setReadNum(topic.getReadNum()+1);
+        ResultDomain resultDomain=topicServiceImpl.updateTopic(topic2);
+        if (resultDomain.getResultCode()>0){
+            topic.setReadNum(topic.getReadNum()+1);
+        }
+        HttpSession session=request.getSession();
+        User user= (User) session.getAttribute("user");
+        log.info("帖子详情");
+        if (user!=null){
+            log.info(user.toString());
+            model.addAttribute("loginResult",1);
+        }
+        else {
+            log.info("未登录！");
+            model.addAttribute("loginResult",-1);
+        }
+        model.addAttribute("user",user);
+        model.addAttribute("topic",topic);
+        return "/jie/detail";
+
+    }
+    @RequestMapping({"/topicInfoUpload"})
+    @ResponseBody
+    public ResultDomain topicInfoUpload(Model model, HttpServletRequest request,@RequestBody Topic topic){
+        log.info(topic.toString());
+        ResultDomain resultDomain=topicServiceImpl.updateTopic(topic);
+        if (resultDomain.getResultCode()>0){
+            if (topic.getTop()==1){
+                resultDomain.setResultMsg("置顶成功");
+            }
+            else
+                resultDomain.setResultMsg("取消置顶成功");
+            if (topic.getEssence()==1){
+                resultDomain.setResultMsg("已加精");
+            }
+            else
+                resultDomain.setResultMsg("已取消加精");
+        }
+        HttpSession session=request.getSession();
+        User user= (User) session.getAttribute("user");
         return resultDomain;
+
     }
 
 }
