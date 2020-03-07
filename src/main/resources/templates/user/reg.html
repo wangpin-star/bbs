@@ -12,11 +12,15 @@
   <script src="/res/js/jquery.min.js"></script>
 </head>
 <body>
-
+<style>
+  .layui-bg-black{
+    background-color: #785757!important;
+  }
+</style>
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
     <a class="fly-logo" href="/">
-      <img src="/res/images/logo.png" alt="layui">
+      <i class="iconfont2 icon-JAVA" style="font-size: 25px;color: #5fb878"></i>
     </a>
     <ul class="layui-nav fly-nav layui-hide-xs">
       <li class="layui-nav-item layui-this">
@@ -80,7 +84,7 @@
               <div class="layui-form-item">
                 <label for="L_username" class="layui-form-label">昵称</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="L_nickname" name="nickname" required lay-verify="required" autocomplete="off" class="layui-input">
+                  <input type="text" id="L_nickname" name="nickname" required lay-verify="required|nickname" autocomplete="off" class="layui-input">
                 </div>
               </div>
 
@@ -211,8 +215,9 @@ layui.use(['form', 'laydate'], function(){
     pass: [
       /^[\S]{6,12}$/
       ,'密码必须6到12位，且不能出现空格'
-    ]
-    ,name: [/^[^0-9][\w_]{4,12}$/,'用户名只能是字母数字和下划线，且不能以字母开头,长度为4~12']
+    ],
+    nickname:[/[^-~!@#$%^&*()/\|,.<>?"'();:_+=\[\]{}]/,'昵称不能含有特殊字符']
+    ,name: [/^[^0-9][\w_]{4,12}$/,'用户名只能是字母数字和下划线，且不能以数字开头,长度为5~12']
     ,qq:[/^[1-9][0-9]{6,14}$/,'qq格式不正确']
   });
 });

@@ -12,11 +12,15 @@
   <script src="/res/js/jquery.min.js"></script>
 </head>
 <body onunload="close()">
-
+<style>
+  .layui-bg-black{
+    background-color: #785757!important;
+  }
+</style>
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
     <a class="fly-logo" href="/">
-      <img src="/res/images/logo.png" alt="layui">
+      <i class="iconfont2 icon-JAVA" style="font-size: 25px;color: #5fb878"></i>
     </a>
     <ul class="layui-nav fly-nav layui-hide-xs">
       <li class="layui-nav-item ">
@@ -32,15 +36,15 @@
       <li class="layui-nav-item login" th:if="${user!=null}">
         <a class="fly-nav-avatar" href="javascript:;">
           <cite class="layui-hide-xs" th:text="${user?.nickname}"></cite>
-          <i style="color:#17abe3" class="iconfont2 icon-VIP" th:if="${user.identity=='会员'}" th:title="'认证信息：'+(${user.identity})"></i>
-          <i style="" class="iconfont2 icon-guanliyuan" th:if="${user.identity=='管理员'}" th:title="'认证信息：'+(${user.identity})"></i>
-          <div th:if="${user.identity=='会员'}" style="display: inline-block;">
+          <i style="color:#17abe3" class="iconfont2 icon-VIP" th:if="${user?.identity=='会员'}" th:title="'认证信息：'+(${user?.identity})"></i>
+          <i style="" class="iconfont2 icon-guanliyuan" th:if="${user?.identity=='管理员'}" th:title="'认证信息：'+(${user?.identity})"></i>
+          <div th:if="${user?.identity=='会员'}" style="display: inline-block;">
             <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="'VIP'+${user.vipGrade}"></i>
           </div>
-          <div th:if="${user.identity=='管理员'}" style="display: inline-block;">
+          <div th:if="${user?.identity=='管理员'}" style="display: inline-block;">
             <i class="layui-badge fly-badge-vip layui-hide-xs" th:text="管理员"></i>
           </div>
-          <img th:src="${user.image} ?:'/userImg/0.jpg'" th:alt="${user.userName}">
+          <img th:src="${user?.image} ?:'/userImg/0.jpg'" th:alt="${user?.userName}">
         </a>
         <dl class="layui-nav-child">
           <dd><a href="/userManage/set"><i class="layui-icon">&#xe620;</i>基本设置</a></dd>
@@ -75,7 +79,7 @@
                       <option value="2">分享</option>
                       <option value="3">讨论</option>
                       <option value="4">建议</option>
-                      <option value="5" th:if="${user.identity=='管理员'}">公告</option>
+                      <option value="5" th:if="${user?.identity=='管理员'}">公告</option>
                     </select>
                   </div>
                 </div>
@@ -97,11 +101,17 @@
                   <label class="layui-form-label">悬赏金币</label>
                   <div class="layui-input-inline" style="width: 190px;">
                     <select id="gold" name="gold">
+                      <option value="0">0</option>
+                      <option value="10">10</option>
                       <option value="20">20</option>
                       <option value="30">30</option>
+                      <option value="40">40</option>
                       <option value="50">50</option>
                       <option value="60">60</option>
+                      <option value="70">70</option>
                       <option value="80">80</option>
+                      <option value="90">90</option>
+                      <option value="100">100</option>
                     </select>
                   </div>
                   <div class="layui-form-mid layui-word-aux">发表后无法更改金币</div>
@@ -153,13 +163,11 @@ layui.config({
   fly: 'index'
 }).use('fly');
 
-var hasUploadImg=0;
-
 layui.use(['form', 'laydate'], function(){
   var form = layui.form
           ,layer = layui.layer
           ,laydate = layui.laydate;
-
+  var usergold=[[${user.gold}]];
   var creatquestion =function(){
      int1=Math.round(Math.random()*10 + 1);
      int2=Math.round(Math.random()*10 + 1);
@@ -170,57 +178,20 @@ layui.use(['form', 'laydate'], function(){
   creatquestion();
   $("#vercode").click(function () {
     creatquestion();
-    layer.msg("切换问题", {
-      icon: 1,
-      time: 3000 //2秒关闭（如果不配置，默认是3秒）
-    } );
   });
-  function validator() {     //账号密码登录验证
+  function validator() {     //验证
     if ($("#L_vercode").val()!=answer) {
       return false;
     }
     return true;
   }
-  var deletefile=function(){
-    $.ajax({
-      url:'/topicManage/deleteFile',
-      type:"POST",
-      dataType: "json",
-      success: function (data) {
-        console.log(data);
-      },
-      error: function (xhr, textStatus, errorThrown) {
-        if(textStatus=="parsererror"){
-          layer.msg("登陆超时！请重新登陆！", {
-            icon: 5,
-            end: function(){
-              window.location.href = '/userManage/login';
-            }
-          });
-        } else if(textStatus=="error"){
-          layer.msg("请求超时！请稍后再试！", {
-            icon: 5,
-          });
 
-        }
-      }
-    });
-  }
-
-  var _t;
-  var cancel= 0;
-  window.onbeforeunload= function(){
-    if (hasSubmit==0&&hasUploadImg==1){//文件上传了但是未提交表单
-        deletefile();
-    }
-  }
-
-  var hasSubmit=0;
   form.on('submit(*)', function(data){
     console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
     console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
     console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
-    return false;
+    console.log(data.field.gold) //当前容器的全部表单字段，名值对形式：{name: value}
+
     if (!validator()){
       layer.msg('答案错误，请重新提交', {
         icon: 5,
@@ -228,7 +199,13 @@ layui.use(['form', 'laydate'], function(){
       });
       return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     }
-
+    if (usergold-data.field.gold<0){
+      layer.msg('金币不足！', {
+        icon: 5,
+        time: 3000 //2秒关闭（如果不配置，默认是3秒）
+      });
+      return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    }
     $.ajax({
       url:'/topicManage/saveTopic',
       data: data.field,
@@ -244,7 +221,7 @@ layui.use(['form', 'laydate'], function(){
             icon: 1,
             time:1000,
             end:function () {
-              window.location.reload();//重定向到登录界面
+              window.location.reload();//重定向到add界面
             }
           });
 

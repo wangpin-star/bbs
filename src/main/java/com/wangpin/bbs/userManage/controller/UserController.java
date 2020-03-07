@@ -1,11 +1,15 @@
 package com.wangpin.bbs.userManage.controller;
 
 
+import com.wangpin.bbs.topicManage.bean.Reply;
 import com.wangpin.bbs.topicManage.bean.Topic;
 import com.wangpin.bbs.topicManage.service.implement.TopicServiceImpl;
+import com.wangpin.bbs.userManage.bean.Collect;
+import com.wangpin.bbs.userManage.bean.Sign;
 import com.wangpin.bbs.userManage.bean.User;
 import com.wangpin.bbs.userManage.service.implement.UserServiceImpl;
 import com.wangpin.bbs.utils.CodeUtil;
+import com.wangpin.bbs.utils.PageResult;
 import com.wangpin.bbs.utils.ResultDomain;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -28,6 +32,10 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.util.*;
 
 @Slf4j
@@ -291,11 +299,20 @@ public class UserController {
 			return "redirect:/userManage/login";
 		else{
 			other=userServiceImpl.userFindByName(name).getResultData();
-			if (other==null)
-				other=userServiceImpl.userFindByNickname(name).getResultData();
+			if (other==null) {
+				other = userServiceImpl.userFindByNickname(name).getResultData();
+				if(other==null){
+					model.addAttribute("message","用户不存在！");
+					return "error/404";
+				}
+			}
 			if (user.getId()==other.getId()){//是当前用户的主页
 				other=user;
 			}
+			List<Topic> userTopic=topicServiceImpl.queryResentlyTopicByUid(other.getId()).getResultData();
+			List<Reply> userReply=topicServiceImpl.queryResentlyReplyByUid(other.getId()).getResultData();
+			model.addAttribute("userTopic",userTopic);
+			model.addAttribute("userReply",userReply);
 			model.addAttribute("other",other);
 			model.addAttribute("user",user);
 		}
@@ -412,9 +429,33 @@ public class UserController {
 	 * @return
 	 */
 	@RequestMapping(value ="/index")
-	public  String toUserIndex(HttpServletRequest request,Model model){
+	public  String toUserIndex(HttpServletRequest request,Model model,@RequestParam(value ="topicPage" ,defaultValue ="0") int page1,@RequestParam(value ="collectionPage" ,defaultValue ="0") int page2){
 		HttpSession session=request.getSession();
 		User user = (User) session.getAttribute("user");
+		if (user==null)
+			return "user/login";
+		if (page1<0)
+			page1=0;
+		if (page2<0)
+			page2=0;
+		int totalTopics=topicServiceImpl.countTopicByUid(user.getId());
+		int totalTopicPage=(totalTopics-1)/10+1;
+		List<Topic> topics=topicServiceImpl.queryUserTopic(user.getId(),page1).getResultData();
+		int totalCollections=topicServiceImpl.countUserCollect(user.getId());
+		int totalCollectPage=(totalCollections-1)/10+1;
+		List<Collect> collects=topicServiceImpl.queryUserCollect(user.getId(),page2).getResultData();
+		int totalCollectionPage=(topicServiceImpl.countUserCollect(user.getId())-1)/10+1;
+		model.addAttribute("pageResult1", PageResult.createPage(totalTopicPage,page1));
+		model.addAttribute("pageResult2", PageResult.createPage(totalCollectionPage,page2));
+		model.addAttribute("thisTopicPage",page1);
+		model.addAttribute("totalTopicPage",totalTopicPage);
+		model.addAttribute("user",user);
+		model.addAttribute("topics",topics);
+		model.addAttribute("collects",collects);
+		model.addAttribute("thisCollectionPage",page2);
+		model.addAttribute("totalCollectionPage",totalCollectionPage);
+		model.addAttribute("totalCollections",totalCollections);
+		model.addAttribute("totalTopics",totalTopics);
 		model.addAttribute("user",user);
 		return "user/index";
 	}
@@ -452,14 +493,93 @@ public class UserController {
 		return  "redirect:/userManage/main";
 	}
 
+	@RequestMapping(value = "/getSignData")
+	@ResponseBody
+	public ResultDomain getSignData(HttpServletRequest request) {
+		HttpSession session=request.getSession();
+		User user= (User) session.getAttribute("user");
+		ResultDomain resultDomain=new ResultDomain();
+		if (user==null){
+			resultDomain.setResultCode(-2);
+			resultDomain.setResultMsg("用户尚未登录！");
+			return resultDomain;
+		}
+		resultDomain = userServiceImpl.querySignDataByUid(user.getId());
+		SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+		int succession=0;//连续签到天数
+		List signData=(List<Sign>)resultDomain.getResultData();
+		Sign []dataArray= (Sign[]) signData.toArray(new Sign[signData.size()]);
+		if (dataArray.length>0)
+			succession=1;
+		for (int i=0;i<dataArray.length-1;i++) {
+			LocalDate end=dataArray[i].getSignTime().toInstant().atZone(ZoneOffset.ofHours(8)).toLocalDate();
+			LocalDate start=dataArray[i+1].getSignTime().toInstant().atZone(ZoneOffset.ofHours(8)).toLocalDate();
+			if (Period.between(start,end).getDays()==1){
+				succession++;
+			}
+			else
+				break;
+		}
+		Map map=new HashMap();
+		Map map2=new HashMap();
+		for (Sign sign:(List<Sign>)resultDomain.getResultData()) {//遍历顺序与集合储存顺序一致，前端控制台打印的数据顺序是固定的
+			map.put(simpleDateFormat.format(sign.getSignTime()),'✓');
+		}
+		if (userServiceImpl.queryTodaySignDataByUid(user.getId()).getResultData().size()>0){
+			int hasSignIn=1;
+			map2.put("hasSignIn",hasSignIn);
+		}
+
+		map2.put("succession",succession);
+		resultDomain.setResultData(map2);
+		resultDomain.setResultCode(1);
+		resultDomain.setResultSubjoin(map);
+		return resultDomain;
+	}
+
+	@RequestMapping(value = "/signIn")
+	@ResponseBody
+	public ResultDomain signIn(HttpServletRequest request,int reward) {
+		HttpSession session=request.getSession();
+		User user= (User) session.getAttribute("user");
+		ResultDomain resultDomain=new ResultDomain();
+		if (user==null){
+			resultDomain.setResultCode(-2);
+			resultDomain.setResultMsg("用户尚未登录！");
+			return resultDomain;
+		}
+		if (userServiceImpl.queryTodaySignDataByUid(user.getId()).getResultData().size()>0){
+			resultDomain.setResultCode(-3);
+			resultDomain.setResultMsg("用户今日已经签到！");
+			return resultDomain;
+		}
+		Sign sign=new Sign();
+		sign.setSignTime(new Date());
+		sign.setUserId(user.getId());
+		sign.setUserName(user.getNickname());
+		resultDomain=userServiceImpl.addSign(sign);
+		if (resultDomain.getResultCode()>0) {
+			user.setGold(user.getGold() + reward);
+			userServiceImpl.userInfoUpload(user);
+		}
+		return resultDomain;
+	}
+
+
 	@RequestMapping(value ={"/main"})
 	private  String toStart(HttpSession httpSession,Model model) {
 		log.info("主页");
 		User user=(User)httpSession.getAttribute("user");
 		List<Topic> topicsTop=topicServiceImpl.queryModuleTopic(null,null,null,0,1,null).getResultData();
 		List<Topic> topicsAll=topicServiceImpl.queryModuleTopic(null,null,null,0,0,10).getResultData();//查询第一页未置顶的帖子
+		List<User> activeUser=userServiceImpl.selectUserOrderByTopicNum().getResultData();
+		List<User> activeUser2=userServiceImpl.selectUserOrderByReplyNum().getResultData();
+		List<Topic> mostPopularTopics=topicServiceImpl.queryTopicOrderByReplyNum().getResultData();
 		model.addAttribute("topicsTop",topicsTop);
 		model.addAttribute("topicsAll",topicsAll);
+		model.addAttribute("activeUser",activeUser);
+		model.addAttribute("activeUser2",activeUser2);
+		model.addAttribute("mostPopularTopics",mostPopularTopics);
 		if (user!=null){
 			log.info(user.toString());
 			model.addAttribute("user",user);

@@ -19,11 +19,6 @@ public class Reply {
     private String content;
 
     /**
-     * 父回复
-     */
-    private Integer fatherId;
-
-    /**
      * 帖子id
      */
     private Integer topicId;
@@ -58,6 +53,11 @@ public class Reply {
      */
     private Integer accept;
 
+    /**
+     * 发帖人头像
+     */
+    private String userImg;
+
     public Integer getId() {
         return id;
     }
@@ -80,14 +80,6 @@ public class Reply {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Integer getFatherId() {
-        return fatherId;
-    }
-
-    public void setFatherId(Integer fatherId) {
-        this.fatherId = fatherId;
     }
 
     public Integer getTopicId() {
@@ -146,6 +138,14 @@ public class Reply {
         this.accept = accept;
     }
 
+    public String getUserImg() {
+        return userImg;
+    }
+
+    public void setUserImg(String userImg) {
+        this.userImg = userImg;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -155,7 +155,6 @@ public class Reply {
         sb.append(", id=").append(id);
         sb.append(", userId=").append(userId);
         sb.append(", content=").append(content);
-        sb.append(", fatherId=").append(fatherId);
         sb.append(", topicId=").append(topicId);
         sb.append(", toUserId=").append(toUserId);
         sb.append(", time=").append(time);
@@ -163,6 +162,7 @@ public class Reply {
         sb.append(", toUserName=").append(toUserName);
         sb.append(", topicTitle=").append(topicTitle);
         sb.append(", accept=").append(accept);
+        sb.append(", userImg=").append(userImg);
         sb.append("]");
         return sb.toString();
     }
@@ -182,14 +182,14 @@ public class Reply {
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
                 && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
                 && (this.getContent() == null ? other.getContent() == null : this.getContent().equals(other.getContent()))
-                && (this.getFatherId() == null ? other.getFatherId() == null : this.getFatherId().equals(other.getFatherId()))
                 && (this.getTopicId() == null ? other.getTopicId() == null : this.getTopicId().equals(other.getTopicId()))
                 && (this.getToUserId() == null ? other.getToUserId() == null : this.getToUserId().equals(other.getToUserId()))
                 && (this.getTime() == null ? other.getTime() == null : this.getTime().equals(other.getTime()))
                 && (this.getUserName() == null ? other.getUserName() == null : this.getUserName().equals(other.getUserName()))
                 && (this.getToUserName() == null ? other.getToUserName() == null : this.getToUserName().equals(other.getToUserName()))
                 && (this.getTopicTitle() == null ? other.getTopicTitle() == null : this.getTopicTitle().equals(other.getTopicTitle()))
-                && (this.getAccept() == null ? other.getAccept() == null : this.getAccept().equals(other.getAccept()));
+                && (this.getAccept() == null ? other.getAccept() == null : this.getAccept().equals(other.getAccept()))
+                && (this.getUserImg() == null ? other.getUserImg() == null : this.getUserImg().equals(other.getUserImg()));
     }
 
     @Override
@@ -199,7 +199,6 @@ public class Reply {
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
         result = prime * result + ((getContent() == null) ? 0 : getContent().hashCode());
-        result = prime * result + ((getFatherId() == null) ? 0 : getFatherId().hashCode());
         result = prime * result + ((getTopicId() == null) ? 0 : getTopicId().hashCode());
         result = prime * result + ((getToUserId() == null) ? 0 : getToUserId().hashCode());
         result = prime * result + ((getTime() == null) ? 0 : getTime().hashCode());
@@ -207,6 +206,7 @@ public class Reply {
         result = prime * result + ((getToUserName() == null) ? 0 : getToUserName().hashCode());
         result = prime * result + ((getTopicTitle() == null) ? 0 : getTopicTitle().hashCode());
         result = prime * result + ((getAccept() == null) ? 0 : getAccept().hashCode());
+        result = prime * result + ((getUserImg() == null) ? 0 : getUserImg().hashCode());
         return result;
     }
 }

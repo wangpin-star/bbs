@@ -7,7 +7,6 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="content" jdbcType="VARCHAR" property="content" />
-    <result column="father_id" jdbcType="INTEGER" property="fatherId" />
     <result column="topic_id" jdbcType="INTEGER" property="topicId" />
     <result column="to_user_id" jdbcType="INTEGER" property="toUserId" />
     <result column="time" jdbcType="TIMESTAMP" property="time" />
@@ -15,6 +14,7 @@
     <result column="to_user_name" jdbcType="VARCHAR" property="toUserName" />
     <result column="topic_title" jdbcType="VARCHAR" property="topicTitle" />
     <result column="accept" jdbcType="INTEGER" property="accept" />
+    <result column="user_img" jdbcType="VARCHAR" property="userImg" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--@mbg.generated-->
@@ -78,8 +78,8 @@
   </sql>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, user_id, content, father_id, topic_id, to_user_id, `time`, user_name, to_user_name, 
-    topic_title, accept
+    id, user_id, content, topic_id, to_user_id, `time`, user_name, to_user_name, topic_title, 
+    accept, user_img
   </sql>
   <select id="selectByExample" parameterType="com.wangpin.bbs.topicManage.bean.ReplyExample" resultMap="BaseResultMap">
     <!--@mbg.generated-->
@@ -117,14 +117,14 @@
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wangpin.bbs.topicManage.bean.Reply" useGeneratedKeys="true">
     <!--@mbg.generated-->
-    insert into reply (user_id, content, father_id, 
-      topic_id, to_user_id, `time`, 
-      user_name, to_user_name, topic_title, 
-      accept)
-    values (#{userId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{fatherId,jdbcType=INTEGER}, 
-      #{topicId,jdbcType=INTEGER}, #{toUserId,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP}, 
-      #{userName,jdbcType=VARCHAR}, #{toUserName,jdbcType=VARCHAR}, #{topicTitle,jdbcType=VARCHAR}, 
-      #{accept,jdbcType=INTEGER})
+    insert into reply (user_id, content, topic_id, 
+      to_user_id, `time`, user_name, 
+      to_user_name, topic_title, accept, 
+      user_img)
+    values (#{userId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{topicId,jdbcType=INTEGER}, 
+      #{toUserId,jdbcType=INTEGER}, #{time,jdbcType=TIMESTAMP}, #{userName,jdbcType=VARCHAR}, 
+      #{toUserName,jdbcType=VARCHAR}, #{topicTitle,jdbcType=VARCHAR}, #{accept,jdbcType=INTEGER}, 
+      #{userImg,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wangpin.bbs.topicManage.bean.Reply" useGeneratedKeys="true">
     <!--@mbg.generated-->
@@ -135,9 +135,6 @@
       </if>
       <if test="content != null">
         content,
-      </if>
-      <if test="fatherId != null">
-        father_id,
       </if>
       <if test="topicId != null">
         topic_id,
@@ -160,6 +157,9 @@
       <if test="accept != null">
         accept,
       </if>
+      <if test="userImg != null">
+        user_img,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userId != null">
@@ -167,9 +167,6 @@
       </if>
       <if test="content != null">
         #{content,jdbcType=VARCHAR},
-      </if>
-      <if test="fatherId != null">
-        #{fatherId,jdbcType=INTEGER},
       </if>
       <if test="topicId != null">
         #{topicId,jdbcType=INTEGER},
@@ -191,6 +188,9 @@
       </if>
       <if test="accept != null">
         #{accept,jdbcType=INTEGER},
+      </if>
+      <if test="userImg != null">
+        #{userImg,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -214,9 +214,6 @@
       <if test="record.content != null">
         content = #{record.content,jdbcType=VARCHAR},
       </if>
-      <if test="record.fatherId != null">
-        father_id = #{record.fatherId,jdbcType=INTEGER},
-      </if>
       <if test="record.topicId != null">
         topic_id = #{record.topicId,jdbcType=INTEGER},
       </if>
@@ -238,6 +235,9 @@
       <if test="record.accept != null">
         accept = #{record.accept,jdbcType=INTEGER},
       </if>
+      <if test="record.userImg != null">
+        user_img = #{record.userImg,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -249,14 +249,14 @@
     set id = #{record.id,jdbcType=INTEGER},
       user_id = #{record.userId,jdbcType=INTEGER},
       content = #{record.content,jdbcType=VARCHAR},
-      father_id = #{record.fatherId,jdbcType=INTEGER},
       topic_id = #{record.topicId,jdbcType=INTEGER},
       to_user_id = #{record.toUserId,jdbcType=INTEGER},
       `time` = #{record.time,jdbcType=TIMESTAMP},
       user_name = #{record.userName,jdbcType=VARCHAR},
       to_user_name = #{record.toUserName,jdbcType=VARCHAR},
       topic_title = #{record.topicTitle,jdbcType=VARCHAR},
-      accept = #{record.accept,jdbcType=INTEGER}
+      accept = #{record.accept,jdbcType=INTEGER},
+      user_img = #{record.userImg,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -270,9 +270,6 @@
       </if>
       <if test="content != null">
         content = #{content,jdbcType=VARCHAR},
-      </if>
-      <if test="fatherId != null">
-        father_id = #{fatherId,jdbcType=INTEGER},
       </if>
       <if test="topicId != null">
         topic_id = #{topicId,jdbcType=INTEGER},
@@ -295,6 +292,9 @@
       <if test="accept != null">
         accept = #{accept,jdbcType=INTEGER},
       </if>
+      <if test="userImg != null">
+        user_img = #{userImg,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
@@ -303,14 +303,68 @@
     update reply
     set user_id = #{userId,jdbcType=INTEGER},
       content = #{content,jdbcType=VARCHAR},
-      father_id = #{fatherId,jdbcType=INTEGER},
       topic_id = #{topicId,jdbcType=INTEGER},
       to_user_id = #{toUserId,jdbcType=INTEGER},
       `time` = #{time,jdbcType=TIMESTAMP},
       user_name = #{userName,jdbcType=VARCHAR},
       to_user_name = #{toUserName,jdbcType=VARCHAR},
       topic_title = #{topicTitle,jdbcType=VARCHAR},
-      accept = #{accept,jdbcType=INTEGER}
+      accept = #{accept,jdbcType=INTEGER},
+      user_img = #{userImg,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <!-- 根据提供帖子id查询回复数 -->
+  <select id="countReplyByTopicId" resultType="int">
+    SELECT
+    count(*)
+    FROM reply
+    <where>
+      <if test="topicId!=null ">
+        AND topic_id= #{topicId, jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+  <!-- 根据提供帖子id分页查询回复 -->
+  <select id="queryReplyByTopicId" resultType="com.wangpin.bbs.topicManage.bean.Reply" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM reply
+    <where>
+      id >=
+      (select id from reply
+      <where>
+        <if test="topicId!=null ">
+           topic_id= #{topicId, jdbcType=INTEGER}
+        </if>
+      </where>
+      order by id asc limit #{offset}, 1)
+      <if test="topicId!=null ">
+        AND topic_id= #{topicId, jdbcType=INTEGER}
+      </if>
+      order by id asc limit 10
+    </where>
+  </select>
+
+  <!-- 查询用户发帖数 -->
+  <select id="countReplyByUid" resultType="int">
+    SELECT
+    count(*)
+    FROM reply
+    <where>
+      <if test="uid!=null">
+        AND user_id= #{uid, jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+  <select id="queryResentlyReplyByUid" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM reply
+    where DATE_SUB(CURDATE(), INTERVAL 30 DAY) &lt;=time
+    and user_id= #{uid, jdbcType=INTEGER}
+    limit 30
+  </select>
 </mapper>

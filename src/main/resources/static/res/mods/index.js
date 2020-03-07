@@ -160,7 +160,6 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
                 ,size: 200
                 ,done: function(res){
                   if(res.code > 0){
-                    hasUploadImg=1;
                     image.val(res.src);
                     layer.msg(res.msg, {icon: 1});
                     console.log(res);
@@ -314,29 +313,11 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
   };
 
   //签到
-  var tplSignin = ['{{# if(d.signed){ }}'
-    ,'<button class="layui-btn layui-btn-disabled">今日已签到</button>'
-    ,'<span>获得了<cite>{{ d.experience }}</cite>飞吻</span>'
-  ,'{{# } else { }}'
-    ,'<button class="layui-btn layui-btn-danger" id="LAY_signin">今日签到</button>'
-    ,'<span>可获得<cite>{{ d.experience }}</cite>飞吻</span>'
-  ,'{{# } }}'].join('')
-  ,tplSigninDay = '已连续签到<cite>{{ d.days }}</cite>天'
-
-  ,signRender = function(data){
-    laytpl(tplSignin).render(data, function(html){
-      elemSigninMain.html(html);
-    });
-    laytpl(tplSigninDay).render(data, function(html){
-      elemSigninDays.html(html);
-    });
-  }
-
-  ,elemSigninHelp = $('#LAY_signinHelp')
+  var elemSigninHelp = $('#LAY_signinHelp')
   ,elemSigninTop = $('#LAY_signinTop')
   ,elemSigninMain = $('.fly-signin-main')
   ,elemSigninDays = $('.fly-signin-days');
-  
+
   if(elemSigninMain[0]){
     /*
     fly.json('/sign/status', function(res){
@@ -378,15 +359,16 @@ layui.define(['layer', 'laytpl', 'form', 'element', 'upload', 'util'], function(
             ,'<tr><th>连续签到天数</th><th>每天可获金币</th></tr>'
           ,'</thead>'
           ,'<tbody>'
-            ,'<tr><td>＜5</td><td>5</td></tr>'
-            ,'<tr><td>≥5</td><td>10</td></tr>'
-            ,'<tr><td>≥15</td><td>15</td></tr>'
-            ,'<tr><td>≥30</td><td>20</td></tr>'
-          ,'</tbody>'
+            ,'<tr><td>＜5</td><td>10</td></tr>'
+            ,'<tr><td>≥5</td><td>20</td></tr>'
+            ,'<tr><td>≥10</td><td>30</td></tr>'
+            ,'<tr><td>≥15</td><td>40</td></tr>'
+            ,'<tr><td>≥20</td><td>60</td></tr>'
+
+        ,'</tbody>'
         ,'</table>'
         ,'<ul>'
-          ,'<li>中间若有间隔，则连续天数重新计算</li>'
-          ,'<li style="color: #FF5722;">不可利用程序自动签到，否则金币清零</li>'
+          ,'<li>签到中断，则连续天数重新计算</li>'
         ,'</ul>'
       ,'</div>'].join('')
     });

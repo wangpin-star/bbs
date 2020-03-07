@@ -27,4 +27,12 @@ public interface ReplyMapper {
     int updateByPrimaryKeySelective(Reply record);
 
     int updateByPrimaryKey(Reply record);
+
+    int countReplyByTopicId(@Param("topicId") Integer topicId);
+
+    int countReplyByUid(@Param("uid") Integer uid);
+
+    List<Reply> queryReplyByTopicId(@Param("topicId") Integer topicId, @Param("offset") Integer offset);
+
+    List<Reply> queryResentlyReplyByUid(@Param("uid") Integer uid);
 }

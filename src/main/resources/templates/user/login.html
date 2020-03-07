@@ -13,10 +13,15 @@
   <script src="/res/layui/layui.js"></script>
 </head>
 <body>
+<style>
+  .layui-bg-black{
+    background-color: #785757!important;
+  }
+</style>
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
     <a class="fly-logo" href="/">
-      <img src="/res/images/logo.png" alt="Java交流社区">
+      <i class="iconfont2 icon-JAVA" style="font-size: 25px;color: #5fb878"></i>
     </a>
     <ul class="layui-nav fly-nav layui-hide-xs">
       <li class="layui-nav-item layui-this">
@@ -66,9 +71,9 @@
                 </div>
               </div>
               <div class="layui-form-item">
-                <label for="L_vercode" class="layui-form-label">人类验证</label>
+                <label for="L_vercode" class="layui-form-label">验证码</label>
                 <div class="layui-input-inline">
-                  <input type="text" id="L_vercode" name="securitycode" required lay-verify="required" placeholder="请回答后面的问题" autocomplete="off" class="layui-input">
+                  <input type="text" id="L_vercode" name="securitycode" required lay-verify="required" placeholder="请输入验证码" autocomplete="off" class="layui-input">
                 </div>
                 <div class="layui-form-mid">
                   <img title="点击切换验证码" alt="验证码" src="/userManage/verifyCode?t=1580730204902" class="fly-imagecode" onClick="getSecurityCode();">
@@ -76,9 +81,9 @@
               </div>
               <div class="layui-form-item">
                 <button class="layui-btn" lay-filter="*" lay-submit>立即登录</button>
-                <span style="padding-left:20px;">
-                  <a href="forget.html">忘记密码？</a>
-                </span>
+<!--                <span style="padding-left:20px;">-->
+<!--                  <a href="forget.html">忘记密码？</a>-->
+<!--                </span>-->
               </div>
             </form>
           </div>
@@ -89,7 +94,7 @@
 </div>
 
 <div class="fly-footer">
-  <p><a href="/userManage/main" target="_blank">Fly社区</a> 2017 &copy; </a></p>
+  <p><a href="/userManage/main" target="_blank">Java交流社区</a> 2020 &copy; </a></p>
 </div>
 
 <script>
@@ -118,15 +123,17 @@
             layer.msg(data.resultMsg, {
               icon: 1,
               time: 1000, //1秒关闭（如果不配置，默认是3秒）
+              offset: '100px',
               end:function () {
-                window.location.href="/userManage/main";//重定向到登录界面
+                window.location.href = document.referrer;//重定向到登录界面
               }
             },);
           }
           else if (data.resultCode==-1){
             layer.msg(data.resultMsg, {
               icon: 5,
-              time: 2000 //4秒关闭（如果不配置，默认是3秒）
+              time: 2000, //4秒关闭（如果不配置，默认是3秒）
+              offset: '100px'
             } );
           }
         },

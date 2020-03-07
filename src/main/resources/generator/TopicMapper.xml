@@ -88,7 +88,7 @@
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, owner_id, reply_num, last_reply_time, content, title, module_id, create_time, 
-    last_reply_id, owner_name, last_reply_name, module_name, topic_state, `top`, `end`, 
+    last_reply_id, owner_name, last_reply_name, module_name, topic_state, top, end,
     essence, read_num, gold, userImg, can_reply
   </sql>
   <select id="selectByExample" parameterType="com.wangpin.bbs.topicManage.bean.TopicExample" resultMap="BaseResultMap">
@@ -479,7 +479,7 @@
             </if>
         </where>
           order by id DESC limit #{offset}, 1)
-
+      AND topic_state!="删除"
       <if test="moduleName !=null ">
         AND module_name= #{moduleName, jdbcType=CHAR}
       </if>
@@ -500,12 +500,13 @@
 
   </select>
 
-  <!-- 根据提供的板块名，帖子名查询 -->
+  <!-- 根据提供的板块名，帖子名查询 ,帖子总数-->
   <select id="count" resultType="int">
     SELECT
     count(*)
     FROM topic
     <where>
+      topic_state!="删除"
       <if test="moduleName !=null ">
         AND module_name= #{moduleName, jdbcType=CHAR}
       </if>
@@ -520,4 +521,111 @@
       </if>
     </where>
   </select>
+
+  <!-- 查询用户发帖数 -->
+  <select id="countTopicByUid" resultType="int">
+    SELECT
+    count(*)
+    FROM topic
+    <where>
+      <if test="uid!=null ">
+        AND owner_id= #{uid, jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+  <select id="queryTopicById" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM topic
+    <where>
+      <if test="id!=null ">
+         id = #{id, jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
+
+  <select id="queryTopicOrderByReplyNum" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM topic
+    where reply_num !=0 and DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= create_time
+    order by reply_num DESC limit 9;
+  </select>
+
+  <select id="queryResentlyTopicByUid" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM topic
+    where
+    <if test="uid!=null ">
+     owner_id  = #{uid,jdbcType=INTEGER}
+    </if>
+     and DATE_SUB(CURDATE(), INTERVAL 30 DAY) &lt;= create_time
+    order by create_time DESC limit 30;
+  </select>
+
+  <!-- 根据提供的用户id分页查询 -->
+  <select id="queryTopicByUid" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM topic
+    <where>
+      id &lt;=
+      (select id from topic
+      <where>
+        <if test="uid!=null ">
+          AND owner_id =#{uid,jdbcType=INTEGER}
+        </if>
+      </where>
+      order by id DESC limit #{offset}, 1)
+      <if test="uid!=null ">
+        AND owner_id =#{uid,jdbcType=INTEGER}
+      </if>
+    </where>
+    order by id DESC
+    <if test="limit!= null ">
+      limit #{limit}
+    </if>
+  </select>
+
+
+  <!-- 根据提供的关键字查询 -->
+  <select id="queryTopicByKeyword" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM topic
+    <where>
+      id &lt;=
+      (select id from topic
+      <where>
+        AND topic_state!="删除"
+        AND title  Like "%"#{keyword}"%"
+      </where>
+      order by id DESC limit #{offset}, 1)
+      AND topic_state!="删除"
+      <if test="keyword!=null ">
+        AND title  Like "%"#{keyword}"%"
+      </if>
+    </where>
+    order by id DESC
+    <if test="limit!= null ">
+      limit #{limit}
+    </if>
+  </select>
+
+  <select id="countTopicByKeyword" resultType="int">
+    SELECT
+    count(*)
+    FROM topic
+    <where>
+      topic_state!="删除"
+      <if test="keyword!=null ">
+        AND title  Like "%"#{keyword}"%"
+      </if>
+    </where>
+    order by id DESC
+  </select>
+
+
 </mapper>

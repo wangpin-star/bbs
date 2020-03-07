@@ -27,4 +27,8 @@ public interface CollectMapper {
     int updateByPrimaryKeySelective(Collect record);
 
     int updateByPrimaryKey(Collect record);
+
+    List<Collect> queryUserCollect( @Param("userId") Integer userId,@Param("offset") Integer offset);
+
+    int countUserCollect(@Param("userId") Integer userId);
 }

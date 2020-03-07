@@ -88,6 +88,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/userManage/login/authen", "anon");
         filterChainDefinitionMap.put("/topicManage/column", "anon");
         filterChainDefinitionMap.put("/topicManage/toDetail", "anon");
+        filterChainDefinitionMap.put("/topicManage/dosearch", "anon");
         filterChainDefinitionMap.put("/res/css/**", "anon");
         filterChainDefinitionMap.put("/res/mods/**", "anon");
         filterChainDefinitionMap.put("/res/font/**", "anon");

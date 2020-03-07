@@ -218,4 +218,39 @@
       topic_title = #{topicTitle,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <!-- 用户id查询收藏帖子 -->
+  <select id="queryUserCollect" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM collect
+    <where>
+      id &lt;=
+      (
+        select id from topic
+        <where>
+          <if test="userId!=null ">
+            user_id=#{userId,jdbcType=INTEGER}
+          </if>
+        </where>
+        order by id DESC limit #{offset}, 1
+      )
+      <if test="userId!=null ">
+        AND user_id=#{userId,jdbcType=INTEGER}
+      </if>
+    </where>
+    order by id DESC limit 10
+  </select>
+
+  <!-- 用户id查询收藏帖子 -->
+  <select id="countUserCollect" resultType="integer">
+    SELECT
+    count(*)
+    FROM collect
+    <where>
+      <if test="userId!=null ">
+        AND user_id=#{userId,jdbcType=INTEGER}
+      </if>
+    </where>
+  </select>
 </mapper>

@@ -27,4 +27,8 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    List<User> selectUserOrderByTopicNum();
+
+    List<User> selectUserOrderByReplyNum();
 }

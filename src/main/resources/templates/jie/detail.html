@@ -22,11 +22,14 @@
   .login{
     display: none!important;
   }
+   .layui-bg-black{
+     background-color: #785757!important;
+   }
 </style>
 <div class="fly-header layui-bg-black">
   <div class="layui-container">
     <a class="fly-logo" href="/">
-      <img src="/res/images/logo.png" alt="layui">
+      <i class="iconfont2 icon-JAVA" style="font-size: 25px;color: #5fb878"></i>
     </a>
     <ul class="layui-nav fly-nav layui-hide-xs">
       <li class="layui-nav-item layui-this">
@@ -92,10 +95,6 @@
       </ul>
 
       <div class="fly-column-right layui-hide-xs">
-        <span class="fly-search"><i class="layui-icon"></i></span>
-        <a href="/topicManage/toAddTopic" class="layui-btn">发表新帖</a>
-      </div>
-      <div class="layui-hide-sm layui-show-xs-block" style="margin-top: -10px; padding-bottom: 10px; text-align: center;">
         <a href="/topicManage/toAddTopic" class="layui-btn">发表新帖</a>
       </div>
     </div>
@@ -109,7 +108,7 @@
         <h1 th:text="${topic.title}"></h1>
         <div class="fly-detail-info">
           <!-- <span class="layui-badge">审核中</span> -->
-          <span class="layui-badge layui-bg-green fly-detail-column" th:text="${topic.moduleName}">动态</span>
+          <span class="layui-badge layui-bg-green fly-detail-column" th:text="${topic.moduleName}"></span>
           
           <span class="layui-badge" style="background-color: #999;" th:if="${topic.end==0}">未结</span>
           <span class="layui-badge" style="background-color: #5FB878;"  th:if="${topic.end==1}">已结</span>
@@ -118,7 +117,7 @@
           <span class="layui-badge layui-bg-red"  th:if="${topic.essence==1}">精帖</span>
           
           <div class="fly-admin-box" data-id="123">
-            <span class="layui-btn layui-btn-xs jie-admin"  id="delete" th:if="${user?.identity=='管理员'}">删除</span>
+            <span class="layui-btn layui-btn-xs jie-admin"  id="delete" th:if="${user?.identity=='管理员' or user?.id==topic.ownerId}">删除</span>
             
             <span class="layui-btn layui-btn-xs jie-admin"  id="stick" style="display: none">置顶</span>
             <span class="layui-btn layui-btn-xs jie-admin"  id="cancel-stick" style="background-color:#ff4545;display: none">取消置顶</span>
@@ -145,6 +144,8 @@
             <span style="padding-right: 10px; color: #FF7200" th:text="'悬赏:' +${topic.gold}+'金币'"></span>
             <span class="layui-btn layui-btn-xs jie-admin" type="edit" th:if="${topic.ownerId==user?.id}"><a th:href="@{/topicManage/toAddTopic(id=${topic?.id})}">编辑此贴</a></span>
           </div>
+          <i class="iconfont2 icon-shoucang collect"  title="收藏" style="display:none;font-size:30px;color:#f5ce11d6;position: absolute;top: 25px;right: 20px;"></i>
+          <i class="iconfont2 icon-shoucang-copy-copy cancel-collect" title="取消收藏" style="display:none;font-size: 30px;color:#f5ce11d6;position: absolute;top: 25px;right: 20px;"></i>
         </div>
         <div class="detail-body photos" id="topicContent">
         </div>
@@ -156,98 +157,121 @@
         </fieldset>
 
         <ul class="jieda" id="jieda">
-          <li data-id="111" class="jieda-daan">
+          <li data-id="111" class="jieda-daan"  th:each="reply:${replies}">
             <a name="item-1111111111"></a>
-            <div class="detail-about detail-about-reply">
-              <a class="fly-avatar" href="">
-                <img src="https://tva1.sinaimg.cn/crop.0.0.118.118.180/5db11ff4gw1e77d3nqrv8j203b03cweg.jpg" alt=" ">
+            <div class="detail-about detail-about-reply" th:attr="data-replyId=${reply?.id}">
+              <a class="fly-avatar" th:href="@{/userManage/home(name=${reply?.userName})}">
+                <img th:src="${reply?.userImg}"  th:alt="${reply?.userName}">
               </a>
               <div class="fly-detail-user">
-                <a href="" class="fly-link">
-                  <cite>贤心</cite>
-                  <i class="iconfont icon-renzheng" title="认证信息：XXX"></i>
-                  <i class="layui-badge fly-badge-vip">VIP3</i>              
+                <a th:href="@{/userManage/home(name=${reply?.userName})}" class="fly-link">
+                  <cite th:text="${reply?.userName}"></cite>
                 </a>
-                <span>(楼主)</span>
-                <!--
-                <span style="color:#5FB878">(管理员)</span>
-                <span style="color:#FF9E3F">（社区之光）</span>
-                <span style="color:#999">（该号已被封）</span>
-                -->
+                <span th:if="${topic.ownerId==reply.userId}">(楼主)</span>
               </div>
 
               <div class="detail-hits">
-                <span>2017-11-30</span>
+                <span th:text="${#calendars.format(reply.time,'yyyy-MM-dd HH:mm:ss')}"></span>
               </div>
 
-              <i class="iconfont icon-caina" title="最佳答案"></i>
+              <i class="iconfont icon-caina" title="最佳答案" th:if="${reply.accept==1}"></i>
             </div>
-            <div class="detail-body jieda-body photos" id="replyContent">
-              <p>香菇那个蓝瘦，这是一条被采纳的回帖</p>
+            <div class="detail-body jieda-body photos replyContent"  th:attr="data-content=${reply.content}">
             </div>
             <div class="jieda-reply">
-              <span class="jieda-zan zanok" type="zan">
-                <i class="iconfont icon-zan"></i>
-                <em>66</em>
-              </span>
-              <span type="reply">
+<!--              <span class="jieda-zan zanok" type="zan">-->
+<!--                <i class="iconfont icon-zan"></i>-->
+<!--                <em>66</em>-->
+<!--              </span>-->
+              <span th:attr="data-user_id=${reply.userId},data-user_name=${reply.userName}" class="reply">
                 <i class="iconfont icon-svgmoban53"></i>
                 回复
               </span>
-              <div class="jieda-admin">
-                <span type="edit">编辑</span>
-                <span type="del">删除</span>
-                <span class="jieda-accept" type="accept">采纳</span>
-                <!-- <span class="jieda-accept" type="accept">采纳</span> -->
+              <div class="jieda-admin"  th:attr="data-id=${reply?.id}">
+                <span class="delete" th:if="${user?.id==reply.userId}">删除</span>
+<!--                只有当前用户自己发布的回复才能删除-->
+                <span class="jieda-accept" th:if="${topic.end==0 and topic.ownerId==user?.id}">采纳</span>
+<!--                只有帖子主人才能采纳-->
               </div>
             </div>
           </li>
 
           <!-- 无数据时 -->
-          <!-- <li class="fly-none">消灭零回复</li> -->
+           <li class="fly-none" th:if="${replies.size()==0}">暂无更多回复</li>
         </ul>
         
         <div class="layui-form layui-form-pane">
           <form  method="post">
             <div class="layui-form-item layui-form-text">
               <a name="comment"></a>
+              <div class="layui-unselect fly-edit">
+                <span type="face1" title="插入表情"><i class="iconfont icon-yxj-expression" style="top: 1px;"></i></span>
+                <span type="picture1" title="插入图片：img[src]"><i class="iconfont icon-tupian"></i></span>
+                <span type="href1" title="超链接格式：a(href)[text]"><i class="iconfont icon-lianjie"></i></span>
+                <span type="code1" title="插入代码或引用"><i class="iconfont icon-emwdaima" style="top: 1px;"></i></span>
+                <span type="hr1" title="插入水平线">hr</span>'
+                <span type="yulan1" title="预览"><i class="iconfont icon-yulan1"></i></span>
+                </div>
               <div class="layui-input-block">
-                <textarea id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor" style="height: 150px;"></textarea>
+                <textarea id="L_content" name="content" required lay-verify="required" placeholder="请输入内容"  class="layui-textarea fly-editor1" style="height: 150px;"></textarea>
               </div>
             </div>
             <div class="layui-form-item">
-              <input type="hidden" name="jid" value="123">
-              <button class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
+              <input type="hidden" name="topicId" th:value="${topic.id}">
+              <input type="hidden" name="topicTitle" th:value="${topic.title}">
+              <input type="hidden"  name="toUserName" th:value="${topic.ownerName}">
+              <input type="hidden" name="toUserId" th:value="${topic.ownerId}">
+              <button id="submit" class="layui-btn" lay-filter="*" lay-submit>提交回复</button>
             </div>
           </form>
         </div>
       </div>
+
+      <div style="text-align: center">
+        <div class="laypage-main">
+          <a  th:href="@{/topicManage/toDetail(id=${topic.id},page=${thisPage}-1)}">上一页</a>
+          <a  th:href="@{/topicManage/toDetail(id=${topic.id},page=0)}" th:if="${thisPage>3}">首页</a>
+          <a  href ="javascript:return false;" th:if="${thisPage>3}">...</a>
+          <a th:class="${thisPage==page}?'laypage-curr':'_'"
+             th:href="@{/topicManage/toDetail(id=${topic.id},page=${page})}"
+             th:style="${thisPage==page} ? 'pointer-events: none;' : '_'"
+             th:each="page:${pageResult}" th:if="${page}>=0" th:text="${page}+1"></a>
+          <a  href ="javascript:return false;" th:if="(${totalPage}>4) and (${totalPage}-${thisPage}>=3)">...</a>
+          <a th:href="@{/topicManage/toDetail(id=${topic.id},page=${totalPage}-1)}"
+             th:if="${totalPage}-${thisPage}>=4" class="laypage-last" title="尾页">尾页</a>
+          <a th:href="@{/topicManage/toDetail(id=${topic.id},page=${thisPage}+1)}"
+             th:if="${totalPage}-${thisPage}>0" class="laypage-next">下一页</a>
+        </div>
+      </div>
+
     </div>
+
     <div class="layui-col-md4">
       <dl class="fly-panel fly-list-one">
         <dt class="fly-panel-title">本周热议</dt>
-        <dd>
-          <a href="">基于 layui 的极简社区页面模版</a>
-          <span><i class="iconfont icon-pinglun1"></i> 16</span>
+        <dd th:each="topic:${mostPopularTopics}">
+          <a th:href="@{/topicManage/toDetail(id=${topic?.id})}" th:text="${topic?.title}" style="overflow: hidden"></a>
+          <span>
+            <i class="iconfont2 icon-pinglun"></i>
+            <span  th:text="${topic?.replyNum}"></span>
+          </span>
         </dd>
-        <!-- 无数据时 -->
-        <!--
-        <div class="fly-none">没有相关数据</div>
-        -->
+        <div class="fly-none" th:if="${mostPopularTopics.size()==0}">本周暂无热议</div>
       </dl>
 
       <div class="fly-panel">
         <div class="fly-panel-title">
-          这里可作为广告区域
+            广告区域
         </div>
         <div class="fly-panel-main">
-          <a href="http://layim.layui.com/?from=fly" target="_blank" class="fly-zanzhu" time-limit="2017.09.25-2099.01.01" style="background-color: #5FB878;">LayIM 3.0 - layui 旗舰之作</a>
+          <a href="" target="_blank" class="fly-zanzhu" style="background-color: #393D49;">广告1</a>
+          <a href="" target="_blank" class="fly-zanzhu" style="background-color: #393D49;">广告2</a>
+          <a href="" target="_blank" class="fly-zanzhu" style="background-color: #393D49;">广告3</a>
         </div>
       </div>
 
       <div class="fly-panel" style="padding: 20px 0; text-align: center;">
 <!--        <img src="../../res/images/weixin.jpg" style="max-width: 100%;" alt="layui">-->
-        <p style="position: relative; color: #666;">微信扫码关注 layui 公众号</p>
       </div>
 
     </div>
@@ -258,37 +282,27 @@
   <p><a href="http://fly.layui.com/" target="_blank">java社区</a> 2020 &copy;</p>
 </div>
 
-<script src="../../res/layui/layui.js"></script>
-<script>
+<script src="/res/layui/layui.js"></script>
+<script th:inline="javascript">//th:inline="javascript" ,必须，否则在Javascript中取值会报错。
 layui.cache.page = 'jie';
 layui.cache.user = {
   username: '游客'
   ,uid: -1
-  ,avatar: '../../res/images/avatar/00.jpg'
+  ,avatar: '/res/images/avatar/00.jpg'
   ,experience: 83
   ,sex: '男'
 };
 layui.config({
   version: "3.0.0"
-  ,base: '../../res/mods/'
+  ,base: '/res/mods/'
 }).extend({
   fly: 'index'
-}).use(['fly', 'face'], function(){
-  var $ = layui.$
-  ,fly = layui.fly;
-  //如果你是采用模版自带的编辑器，你需要开启以下语句来解析。
-  /*
-  $('.detail-body').each(function(){
-    var othis = $(this), html = othis.html();
-    othis.html(fly.content(html));
-  });
-  */
-});
-</script>
-<script th:inline="javascript">//th:inline="javascript" ,必须，否则在Javascript中取值会报错。
-  layui.use(['form', 'laydate'], function() {
+}).use('fly');
+
+  layui.use(['form', 'laydate','upload'], function() {
     var form = layui.form
             , layer = layui.layer
+            ,upload = layui.upload
             , laydate = layui.laydate;
     var loginResult=[[${loginResult}]];
     if (loginResult==1){
@@ -297,6 +311,7 @@ layui.config({
     if (loginResult==-1){
       $(".unlogin").removeClass("unlogin")
     }
+    //登录或未登录状态顶部显示
 
     faces = {"[微笑]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/5c/huanglianwx_thumb.gif","[嘻嘻]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/0b/tootha_thumb.gif","[哈哈]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/6a/laugh.gif","[可爱]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/14/tza_thumb.gif","[可怜]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/af/kl_thumb.gif","[挖鼻]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/0b/wabi_thumb.gif","[吃惊]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/f4/cj_thumb.gif","[害羞]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/6e/shamea_thumb.gif","[挤眼]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/c3/zy_thumb.gif","[闭嘴]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/29/bz_thumb.gif","[鄙视]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/71/bs2_thumb.gif","[爱你]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/6d/lovea_thumb.gif","[泪]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/9d/sada_thumb.gif","[偷笑]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/19/heia_thumb.gif","[亲亲]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/8f/qq_thumb.gif","[生病]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/b6/sb_thumb.gif","[太开心]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/58/mb_thumb.gif","[白眼]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/d9/landeln_thumb.gif","[右哼哼]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/98/yhh_thumb.gif","[左哼哼]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/6d/zhh_thumb.gif","[嘘]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/a6/x_thumb.gif","[衰]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/af/cry.gif","[委屈]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/73/wq_thumb.gif","[吐]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/9e/t_thumb.gif","[哈欠]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/cc/haqianv2_thumb.gif","[抱抱]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/27/bba_thumb.gif","[怒]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/7c/angrya_thumb.gif","[疑问]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/5c/yw_thumb.gif","[馋嘴]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/a5/cza_thumb.gif","[拜拜]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/70/88_thumb.gif","[思考]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/e9/sk_thumb.gif","[汗]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/24/sweata_thumb.gif","[困]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/40/kunv2_thumb.gif","[睡]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/96/huangliansj_thumb.gif","[钱]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/90/money_thumb.gif","[失望]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/0c/sw_thumb.gif","[酷]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/40/cool_thumb.gif","[色]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/20/huanglianse_thumb.gif","[哼]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/49/hatea_thumb.gif","[鼓掌]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/36/gza_thumb.gif","[晕]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/d9/dizzya_thumb.gif","[悲伤]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/1a/bs_thumb.gif","[抓狂]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/62/crazya_thumb.gif","[黑线]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/91/h_thumb.gif","[阴险]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/6d/yx_thumb.gif","[怒骂]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/60/numav2_thumb.gif","[互粉]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/89/hufen_thumb.gif","[心]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/40/hearta_thumb.gif","[伤心]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/ea/unheart.gif","[猪头]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/58/pig.gif","[熊猫]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/6e/panda_thumb.gif","[兔子]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/81/rabbit_thumb.gif","[ok]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/d6/ok_thumb.gif","[耶]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/d9/ye_thumb.gif","[good]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/d8/good_thumb.gif","[NO]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/ae/buyao_org.gif","[赞]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/d0/z2_thumb.gif","[来]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/40/come_thumb.gif","[弱]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/d8/sad_thumb.gif","[草泥马]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/7a/shenshou_thumb.gif","[神马]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/60/horse2_thumb.gif","[囧]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/15/j_thumb.gif","[浮云]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/bc/fuyun_thumb.gif","[给力]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/1e/geiliv2_thumb.gif","[围观]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/f2/wg_thumb.gif","[威武]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/70/vw_thumb.gif","[奥特曼]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/bc/otm_thumb.gif","[礼物]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/c4/liwu_thumb.gif","[钟]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/d3/clock_thumb.gif","[话筒]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/9f/huatongv2_thumb.gif","[蜡烛]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/d9/lazhuv2_thumb.gif","[蛋糕]":"http://img.t.sinajs.cn/t4/appstyle/expression/ext/normal/3a/cakev2_thumb.gif"};
     var escape= function(html){
@@ -311,7 +326,7 @@ layui.config({
       content = escape(content||'') //XSS
               .replace(/img\[([^\s]+?)\]/g, function(img){  //转义图片
                 return '<img src="' + img.replace(/(^img\[)|(\]$)/g, '') + '">';
-              }).replace(/@(\S+)(\s+?|$)/g, '@<a href="javascript:;" class="fly-aite">$1</a>$2') //转义@
+              }).replace(/@\[(.*?)\]/g,'@<a href="/userManage/home?name=$1" class="fly-aite">$1</a>') //转义@
               .replace(/face\[([^\s\[\]]+?)\]/g, function(face){  //转义表情
                 var alt = face.replace(/^face/g, '');
                 return '<img alt="'+ alt +'" title="'+ alt +'" src="' + faces[alt] + '">';
@@ -325,12 +340,18 @@ layui.config({
               .replace(/\n/g, '<br>') //转义换行
       return content;
     }
+    //帖子内容转义
     content=[[${topic.content}]];
     content2=analysisContent(content);
     $("#topicContent").html(content2);
+    console.log("hh");
+    console.log(content)
+
     isTop=[[${topic.top}]];
     isEssence=[[${topic.essence}]];
     isAdmin=[[${user?.identity}]]=='管理员';
+
+    //按钮显示
     if (isAdmin){
       if (isEssence){
         $("#cancel-essence").css("display","inline-block");
@@ -344,6 +365,74 @@ layui.config({
         $("#stick").css("display","inline-block");
     }
     code=0;//记录修改是否成功
+
+    $("#delete").click(function () {
+      var topicdata=new Object()
+      topicdata.topicState="删除";
+      topicdata.id=[[${topic.id}]];
+      layer.confirm('是否确认删除?一旦删除无法恢复！', {icon: 3, title:'提示'}, function(index){
+                //do something
+                $.ajax({
+                  url:'/topicManage/topicInfoUpload',
+                  async:false,
+                  data:JSON.stringify(topicdata),
+                  type:"POST",
+                  contentType:"application/json",
+                  dataType: "json",
+                  success: function (data) {
+                    console.log(data);
+                    if (data.resultCode=1){
+                      layer.msg(data.resultMsg, {
+                      icon: 1,
+                      time:1000,
+                      });
+                    }
+                    else if (data.resultCode==2){
+                      layer.msg(data.resultMsg, {
+                        icon: 1,
+                        time:1000,
+                        end:function () {
+                          window.location.reload();//重定向到帖子详情界面
+                        }
+                      });
+                    }
+                    else
+                      layer.msg(data.resultMsg, {
+                        icon: 5,
+                        time:3000
+                      });
+                  },
+                error: function (xhr, textStatus, errorThrown) {
+                  // console.log("状态码："+xhr.status);
+                  // console.log("状态:"+xhr.readyState);//当前状态,0-未初始化，1-正在载入，2-已经载入，3-数据进行交互，4-完成。
+                  // console.log("错误信息:"+xhr.statusText );
+                  // console.log("返回响应信息："+xhr.responseText );//这里是详细的信息
+                  // console.log("请求状态："+textStatus);
+                  // console.log(errorThrown);
+                  if(textStatus=="parsererror"){
+                    layer.msg("登陆超时！请重新登陆！", {
+                      icon: 5,
+                      end: function(){
+                        window.location.href = '/userManage/login';
+                      }
+                    });
+                  } else if(textStatus=="error"){
+                    layer.msg("请求超时！请稍后再试！", {
+                      icon: 5,
+                    });
+
+                  }
+                }
+              });
+                layer.close(index);
+              },
+              function(index){
+                //do something
+                layer.close(index);
+              }
+      );
+    });
+
     $("#stick").click(function () {
         set('stick');//置顶操作
         if (code>0){
@@ -373,9 +462,11 @@ layui.config({
       }
     });
 
+    //修改置顶，加精
     var set=function(how){
       console.log(code)
       console.log(how)
+      comfirm=1;
       if (how=='stick'){
         var topicdata=new Object()
         topicdata.top=1;
@@ -393,26 +484,34 @@ layui.config({
       }
       if (how=='cancel-essence'){
         var topicdata=new Object()
-        topicdata.essence=1;
+        topicdata.essence=0;
         topicdata.id=[[${topic.id}]];
       }
-      console.log(JSON.stringify(topicdata));
+
       $.ajax({
         url:'/topicManage/topicInfoUpload',
+        async:false,
         data:JSON.stringify(topicdata),
         type:"POST",
+        contentType:"application/json",
         dataType: "json",
         success: function (data) {
           console.log(data);
-          if (data.resultCode>=1){
-            hasSubmit=1;
-            $("#submit").attr('disabled',true);
-            $("#submit").addClass("layui-btn-disabled");
+          if (data.resultCode=1){
             layer.msg(data.resultMsg, {
               icon: 1,
               time:1000,
             });
             code=1;
+          }
+          else if (data.resultCode==2){
+            layer.msg(data.resultMsg, {
+              icon: 1,
+              time:1000,
+              end:function () {
+                window.location.reload();//重定向到帖子详情界面
+              }
+            });
           }
           else
             layer.msg(data.resultMsg, {
@@ -442,7 +541,472 @@ layui.config({
           }
         }
       });
+
+
     }
+
+    layui.focusInsert = function(obj, str){
+      var result, val = obj.value;
+      obj.focus();
+      if(document.selection){ //ie
+        result = document.selection.createRange();
+        document.selection.empty();
+        result.text = str;
+      } else {
+        result = [val.substring(0, obj.selectionStart), str, val.substr(obj.selectionEnd)];
+        obj.focus();
+        obj.value = result.join('');
+      }
+    };
+
+//监听提交回复
+    form.on('submit(*)', function(data){
+      console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+      console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+      console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+      //return false;
+      $.ajax({
+        url:'/topicManage/saveReply',
+        data: data.field,
+        type:"POST",
+        dataType: "json",
+        success: function (data) {
+          console.log(data);
+          if (data.resultCode>=1){
+            $("#submit").attr('disabled',true);
+            $("#submit").addClass("layui-btn-disabled");
+            layer.msg(data.resultMsg, {
+              icon: 1,
+              time:1000,
+              end:function () {
+                window.location.reload();//重定向到帖子详情界面
+              }
+            });
+
+          }
+          else
+            layer.msg(data.resultMsg, {
+              icon: 5,
+            });
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          // console.log("状态码："+xhr.status);
+          // console.log("状态:"+xhr.readyState);//当前状态,0-未初始化，1-正在载入，2-已经载入，3-数据进行交互，4-完成。
+          // console.log("错误信息:"+xhr.statusText );
+          // console.log("返回响应信息："+xhr.responseText );//这里是详细的信息
+          // console.log("请求状态："+textStatus);
+          // console.log(errorThrown);
+          if(textStatus=="parsererror"){
+            layer.msg("请登陆后重试！", {
+              icon: 2,
+              time:1500,
+              end: function(){
+                window.location.href = '/userManage/login';
+              }
+            });
+          } else if(textStatus=="error"){
+            layer.msg("请求超时！请稍后再试！", {
+              icon: 5,
+            });
+
+          }
+        }
+      });
+      return false;
+    });
+
+
+    var mod = {
+      face1: function(editor, self){ //插入表情
+        var str = '', ul, face = faces;
+        for(var key in face){
+          str += '<li title="'+ key +'"><img src="'+ face[key] +'"></li>';
+        }
+        str = '<ul id="LAY-editface" class="layui-clear">'+ str +'</ul>';
+        layer.tips(str, self, {
+          tips: 3
+          ,time: 0
+          ,skin: 'layui-edit-face'
+        });
+        $(document).on('click', function(){
+          layer.closeAll('tips');
+        });
+        $('#LAY-editface li').on('click', function(){
+          var title = $(this).attr('title') + ' ';
+          layui.focusInsert(editor[0], 'face' + title);
+        });
+      }
+      ,picture1: function(editor){ //插入图片
+        console.log(editor)
+        layer.open({
+          type: 1
+          ,id: 'fly-jie-upload'
+          ,title: '插入图片'
+          ,area: 'auto'
+          ,shade: false
+          ,area: '465px'
+          ,fixed: false
+          ,offset: [
+            editor.offset().top - $(window).scrollTop() + 'px'
+            ,editor.offset().left + 'px'
+          ]
+          ,skin: 'layui-layer-border'
+          ,content: ['<ul class="layui-form layui-form-pane" style="margin: 20px;">'
+            ,'<li class="layui-form-item">'
+            ,'<label class="layui-form-label">URL</label>'
+            ,'<div class="layui-input-inline">'
+            ,'<input required name="image" placeholder="支持直接粘贴远程图片地址" value="" class="layui-input">'
+            ,'</div>'
+            ,'<button type="button" class="layui-btn layui-btn-primary" id="uploadImg"><i class="layui-icon">&#xe67c;</i>上传图片</button>'
+            ,'</li>'
+            ,'<li class="layui-form-item" style="text-align: center;">'
+            ,'<button type="button" lay-submit lay-filter="uploadImages" class="layui-btn">确认</button>'
+            ,'</li>'
+            ,'</ul>'].join('')
+          ,success: function(layero, index){
+            var image =  layero.find('input[name="image"]');
+
+            //执行上传实例
+            upload.render({
+              elem: '#uploadImg'
+              ,url: '/topicManage/uploadTopicImg'
+              ,size: 200
+              ,done: function(res){
+                if(res.code > 0){
+                  image.val(res.src);
+                  layer.msg(res.msg, {icon: 1});
+                  console.log(res);
+                } else {
+                  layer.msg(res.msg, {icon: 5});
+                }
+              }
+            });
+
+            form.on('submit(uploadImages)', function(data){
+              var field = data.field;
+              if(!field.image) return image.focus();
+              layui.focusInsert(editor[0], 'img['+ field.image + '] ');
+              layer.close(index);
+            });
+          }
+        });
+      }
+      ,href1: function(editor){ //超链接
+        layer.prompt({
+          title: '请输入合法链接'
+          ,shade: false
+          ,fixed: false
+          ,id: 'LAY_flyedit_href'
+          ,offset: [
+            editor.offset().top - $(window).scrollTop() + 'px'
+            ,editor.offset().left + 'px'
+          ]
+        }, function(val, index, elem){
+          if(!/^http(s*):\/\/[\S]/.test(val)){
+            layer.tips('这根本不是个链接，不要骗我。', elem, {tips:1})
+            return;
+          }
+          layui.focusInsert(editor[0], ' a('+ val +')['+ val + '] ');
+          layer.close(index);
+        });
+      }
+      ,code1: function(editor){ //插入代码
+        layer.prompt({
+          title: '请贴入代码或任意文本'
+          ,formType: 2
+          ,maxlength: 10000
+          ,shade: false
+          ,id: 'LAY_flyedit_code'
+          ,area: ['800px', '360px']
+        }, function(val, index, elem){
+          layui.focusInsert(editor[0], '[pre]\n'+ val + '\n[/pre]');
+          layer.close(index);
+        });
+      }
+      ,hr1: function(editor){ //插入水平分割线
+        layui.focusInsert(editor[0], '[hr]');
+      }
+      ,yulan1: function(editor){ //预览
+        var content = editor.val();
+
+        content = /^\{html\}/.test(content)
+                ? content.replace(/^\{html\}/, '')
+                : analysisContent(content);
+
+        layer.open({
+          type: 1
+          ,title: '预览'
+          ,shade: false
+          ,area: ['100%', '100%']
+          ,scrollbar: false
+          ,content: '<div class="detail-body" style="margin:20px;">'+ content +'</div>'
+        });
+      }
+    };
+    $(".fly-edit").children('span').on('click', function(event){//点击插入图片、表情等
+      var that = $(".fly-editor1"), othis =$(that);
+      var type = $(this).attr('type');
+      console.log(this)
+      mod[type].call(that, othis, this);
+      if(type === 'face1'){
+        event.stopPropagation()
+      }
+    });
+
+    //回复内容转义
+    $(".replyContent").each(function () {
+      thisContent=$(this).data('content');
+      $(this).html(analysisContent(thisContent));
+    });
+
+    //点击回复
+    $(".reply").click(function(){
+      content="@["+$(this).data("user_name")+"]   "+$(".fly-editor1").val();
+      $(this).css('pointer-events',"none");
+      $(this).addClass("layui-btn-disabled");
+      $(".fly-editor1").val(content);
+    })
+
+    //点击删除回复
+    $(".delete").click(function () {
+      var parent=$(this).parents(".jieda-daan");
+      var grandpa=$(this).parents("#jieda")
+      var replyId=$(this).parent().data('id');
+      var topicId=[[${topic.id}]];
+      var brother=parent.siblings(".jieda-daan");
+      console.log(brother.length);
+
+      layer.confirm('是否确认删除?一旦删除无法恢复！', {icon: 3, title:'提示'}, function(index){
+                //do something
+                $.ajax({
+                  url:'/topicManage/deleteReply',
+                  data:{"id":replyId,"topicId":topicId},
+                  type:"POST",
+                  success: function (data) {
+                    console.log(data);
+                    if (data.resultCode>=1){
+                      hasSubmit=1;
+                      layer.msg(data.resultMsg, {
+                        icon: 1,
+                        time:1000,
+                      });
+                      parent.remove();
+                      if (brother.length==0)
+                        grandpa.html("<li class=\"fly-none\" th:if=\"${replies.size()==0}\">暂无回复</li>");
+                    }
+                    else
+                      layer.msg(data.resultMsg, {
+                        icon: 5,
+                      });
+                  },
+                  error: function (xhr, textStatus, errorThrown) {
+                    // console.log("状态码："+xhr.status);
+                    // console.log("状态:"+xhr.readyState);//当前状态,0-未初始化，1-正在载入，2-已经载入，3-数据进行交互，4-完成。
+                    // console.log("错误信息:"+xhr.statusText );
+                    // console.log("返回响应信息："+xhr.responseText );//这里是详细的信息
+                    // console.log("请求状态："+textStatus);
+                    // console.log(errorThrown);
+                    if(textStatus=="parsererror"){
+                      layer.msg("请登陆后重试！", {
+                        icon: 2,
+                        time:1500,
+                        end: function(){
+                          window.location.href = '/userManage/login';
+                        }
+                      });
+                    } else if(textStatus=="error"){
+                      layer.msg("请求超时！请稍后再试！", {
+                        icon: 5,
+                      });
+                    }
+                  }
+                });
+                layer.close(index);
+              },
+              function(index){
+                //do something
+                layer.close(index);
+              }
+      );
+
+    });
+
+    //点击采纳
+    $(".jieda-accept").click(function () {
+      var parent=$(this).parents(".jieda-daan");
+      var topicId=[[${topic.id}]];
+      var replyId=$(this).parent().data('id');
+      var gold=[[${topic.gold}]];
+      layer.confirm('是否采纳?一旦采纳金币无法退回！', {icon: 3, title:'提示'}, function(index){
+                //do something
+                $.ajax({
+                  url:'/topicManage/acceptReply',
+                  async:false,
+                  data:{"topicId":topicId,"replyId":replyId,"gold":gold},
+                  type:"POST",
+                  dataType: "json",
+                  success: function (data) {
+                    console.log(data);
+                    if (data.resultCode>0){
+                      layer.msg(data.resultMsg, {
+                        icon: 1,
+                        time:1000,
+                      });
+                      $("[data-replyId="+replyId+"]").append("<i class=\"iconfont icon-caina\" title=\"最佳答案\" th:if=\"${reply.accept==1}\"></i>\n")
+                      $(".jieda-accept").css("display","none");
+                    }
+                    else
+                      layer.msg(data.resultMsg, {
+                        icon: 5,
+                        time:3000
+                      });
+                  },
+                  error: function (xhr, textStatus, errorThrown) {
+                    // console.log("状态码："+xhr.status);
+                    // console.log("状态:"+xhr.readyState);//当前状态,0-未初始化，1-正在载入，2-已经载入，3-数据进行交互，4-完成。
+                    // console.log("错误信息:"+xhr.statusText );
+                    // console.log("返回响应信息："+xhr.responseText );//这里是详细的信息
+                    // console.log("请求状态："+textStatus);
+                    // console.log(errorThrown);
+                    if(textStatus=="parsererror"){
+                      layer.msg("登陆超时！请重新登陆！", {
+                        icon: 5,
+                        end: function(){
+                          window.location.href = '/userManage/login';
+                        }
+                      });
+                    } else if(textStatus=="error"){
+                      layer.msg("请求超时！请稍后再试！", {
+                        icon: 5,
+                      });
+
+                    }
+                  }
+                });
+                layer.close(index);
+              },
+              function(index){
+                //do something
+                layer.close(index);
+              }
+      );
+    });
+
+    hasCollect=[[${hasCollect}]];
+    console.log(hasCollect)
+    if (hasCollect==1){
+      $(".cancel-collect").css("display","inline-block");
+    }else {
+      $(".collect").css("display","inline-block");
+    }
+    //点击收藏帖子
+    $(".collect").click(function () {
+        var collectdata=new Object()
+        collectdata.userId=[[${user?.id}]];
+        collectdata.topicId=[[${topic.id}]];
+        collectdata.topicTitle=[[${topic.title}]];
+      $.ajax({
+        url:'/topicManage/collectTopic',
+        async:false,
+        data:JSON.stringify(collectdata),
+        type:"POST",
+        contentType:"application/json",
+        dataType: "json",
+        success: function (data) {
+          console.log(data);
+          if (data.resultCode=1){
+            layer.msg(data.resultMsg, {
+              icon: 1,
+              time:1000,
+            });
+            $(".cancel-collect").css("display","inline-block");
+            $(".collect").css("display","none");
+          }
+          else
+            layer.msg(data.resultMsg, {
+              icon: 5,
+              time:2000
+            });
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          // console.log("状态码："+xhr.status);
+          // console.log("状态:"+xhr.readyState);//当前状态,0-未初始化，1-正在载入，2-已经载入，3-数据进行交互，4-完成。
+          // console.log("错误信息:"+xhr.statusText );
+          // console.log("返回响应信息："+xhr.responseText );//这里是详细的信息
+          // console.log("请求状态："+textStatus);
+          // console.log(errorThrown);
+          if(textStatus=="parsererror"){
+            layer.msg("登陆超时或未登录！请登陆后重试！", {
+              icon: 5,
+              time:1500,
+              end: function(){
+                window.location.href = '/userManage/login';
+              }
+            });
+          } else if(textStatus=="error"){
+            layer.msg("请求超时！请稍后再试！", {
+              time:1500,
+              icon: 5,
+            });
+
+          }
+        }
+      });
+    });
+
+    //点击取消收藏帖子
+    $(".cancel-collect").click(function () {
+      var collectdata=new Object()
+      collectdata.userId=[[${user?.id}]];
+      collectdata.topicId=[[${topic.id}]];
+      $.ajax({
+        url:'/topicManage/cancelCollectTopic',
+        async:false,
+        data:JSON.stringify(collectdata),
+        type:"POST",
+        contentType:"application/json",
+        dataType: "json",
+        success: function (data) {
+          console.log(data);
+          if (data.resultCode=1){
+            layer.msg(data.resultMsg, {
+              icon: 1,
+              time:1000,
+            });
+            $(".collect").css("display","inline-block");
+            $(".cancel-collect").css("display","none");
+          }
+          else
+            layer.msg(data.resultMsg, {
+              icon: 5,
+              time:2000
+            });
+        },
+        error: function (xhr, textStatus, errorThrown) {
+          // console.log("状态码："+xhr.status);
+          // console.log("状态:"+xhr.readyState);//当前状态,0-未初始化，1-正在载入，2-已经载入，3-数据进行交互，4-完成。
+          // console.log("错误信息:"+xhr.statusText );
+          // console.log("返回响应信息："+xhr.responseText );//这里是详细的信息
+          // console.log("请求状态："+textStatus);
+          // console.log(errorThrown);
+          if(textStatus=="parsererror"){
+            layer.msg("登陆超时或未登录！请登陆后重试！", {
+              icon: 5,
+              time:1500,
+              end: function(){
+                window.location.href = '/userManage/login';
+              }
+            });
+          } else if(textStatus=="error"){
+            layer.msg("请求超时！请稍后再试！", {
+              time:1500,
+              icon: 5,
+            });
+
+          }
+        }
+      });
+    });
 
   });
 </script>

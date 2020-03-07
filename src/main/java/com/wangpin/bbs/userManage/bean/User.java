@@ -34,8 +34,8 @@ public class User {
     /**
      * 生日
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
 
     /**
@@ -107,6 +107,11 @@ public class User {
      * 身份
      */
     private String identity;
+
+    /**
+     * 回贴数
+     */
+    private Integer replyNum;
 
     public Integer getId() {
         return id;
@@ -268,6 +273,14 @@ public class User {
         this.identity = identity;
     }
 
+    public Integer getReplyNum() {
+        return replyNum;
+    }
+
+    public void setReplyNum(Integer replyNum) {
+        this.replyNum = replyNum;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -294,6 +307,7 @@ public class User {
         sb.append(", spend=").append(spend);
         sb.append(", vipGrade=").append(vipGrade);
         sb.append(", identity=").append(identity);
+        sb.append(", replyNum=").append(replyNum);
         sb.append("]");
         return sb.toString();
     }
@@ -329,7 +343,8 @@ public class User {
                 && (this.getAnswer() == null ? other.getAnswer() == null : this.getAnswer().equals(other.getAnswer()))
                 && (this.getSpend() == null ? other.getSpend() == null : this.getSpend().equals(other.getSpend()))
                 && (this.getVipGrade() == null ? other.getVipGrade() == null : this.getVipGrade().equals(other.getVipGrade()))
-                && (this.getIdentity() == null ? other.getIdentity() == null : this.getIdentity().equals(other.getIdentity()));
+                && (this.getIdentity() == null ? other.getIdentity() == null : this.getIdentity().equals(other.getIdentity()))
+                && (this.getReplyNum() == null ? other.getReplyNum() == null : this.getReplyNum().equals(other.getReplyNum()));
     }
 
     @Override
@@ -356,6 +371,7 @@ public class User {
         result = prime * result + ((getSpend() == null) ? 0 : getSpend().hashCode());
         result = prime * result + ((getVipGrade() == null) ? 0 : getVipGrade().hashCode());
         result = prime * result + ((getIdentity() == null) ? 0 : getIdentity().hashCode());
+        result = prime * result + ((getReplyNum() == null) ? 0 : getReplyNum().hashCode());
         return result;
     }
 }

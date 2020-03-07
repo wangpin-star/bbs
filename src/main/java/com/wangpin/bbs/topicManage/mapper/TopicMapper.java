@@ -31,4 +31,18 @@ public interface TopicMapper {
     List<Topic> selectByModuleNameOrTopicState(@Param("offset") int offset, @Param("moduleName") String moduleName, @Param("end") Integer end, @Param("essence") Integer essence, @Param("top") Integer top, @Param("limit") Integer limit);
 
     int count(@Param("moduleName") String moduleName, @Param("end") Integer end, @Param("essence") Integer essence, @Param("top") Integer top);
+
+    int countTopicByUid(@Param("uid") Integer uid);
+
+    Topic queryTopicById(@Param("id") Integer id);
+
+    List<Topic> queryTopicOrderByReplyNum();
+
+    List<Topic> queryTopicByKeyword(@Param("keyword") String keyword, @Param("offset") Integer offset, @Param("limit") Integer limit);
+
+    int countTopicByKeyword(@Param("keyword") String keyword, @Param("offset") Integer offset);
+
+    List<Topic> queryResentlyTopicByUid(@Param("uid") Integer uid);
+
+    List<Topic> queryTopicByUid(@Param("uid") Integer uid, @Param("offset") Integer offset, @Param("limit") Integer limit);
 }

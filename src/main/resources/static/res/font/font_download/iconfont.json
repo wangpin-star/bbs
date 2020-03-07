@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "9376305",
+      "name": "JAVA",
+      "font_class": "JAVA",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
+      "icon_id": "3693170",
+      "name": "收 藏",
+      "font_class": "shoucang-copy-copy",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "6123042",
+      "name": "收 藏",
+      "font_class": "shoucang",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "3136929",
+      "name": "发帖数",
+      "font_class": "fatieshu",
+      "unicode": "e6f2",
+      "unicode_decimal": 59122
+    },
+    {
+      "icon_id": "826592",
+      "name": "web",
+      "font_class": "web",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
       "icon_id": "1473442",
       "name": "VIP",
       "font_class": "VIP",

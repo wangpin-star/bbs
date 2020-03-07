@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wangpin.bbs.userManage.mapper.SignMapper">
+  <resultMap id="BaseResultMap" type="com.wangpin.bbs.userManage.bean.Sign">
+    <!--@mbg.generated-->
+    <!--@Table sign-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="sign_time" jdbcType="DATE" property="signTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, user_id, user_name, sign_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from sign
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    <!--@mbg.generated-->
+    delete from sign
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.wangpin.bbs.userManage.bean.Sign" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into sign (user_id, user_name, sign_time
+      )
+    values (#{userId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, #{signTime,jdbcType=DATE}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.wangpin.bbs.userManage.bean.Sign" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into sign
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="signTime != null">
+        sign_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null">
+        #{signTime,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wangpin.bbs.userManage.bean.Sign">
+    <!--@mbg.generated-->
+    update sign
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="signTime != null">
+        sign_time = #{signTime,jdbcType=DATE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wangpin.bbs.userManage.bean.Sign">
+    <!--@mbg.generated-->
+    update sign
+    set user_id = #{userId,jdbcType=INTEGER},
+      user_name = #{userName,jdbcType=VARCHAR},
+      sign_time = #{signTime,jdbcType=DATE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="querySignDataByUid" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM sign
+    where
+    <if test="uid!=null ">
+      user_id = #{uid,jdbcType=INTEGER}
+    </if>
+    and DATE_FORMAT(sign_time, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )
+    order by sign_time DESC
+  </select>
+
+<!-- 统计用户累计签到次数 -->
+  <select id="countSignDataByUid" resultType="integer">
+    SELECT
+    count(*)
+    FROM sign
+    where
+    <if test="uid!=null ">
+      user_id = #{uid,jdbcType=INTEGER}
+    </if>
+  </select>
+
+<!--to_days函数计算日期 d 距离 0000 年 1 月 1 日的天数	，查询用户当天的签到记录-->
+  <select id="queryTodaySignDataByUid" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    FROM sign
+    where
+    <if test="uid!=null ">
+      user_id = #{uid,jdbcType=INTEGER}
+    </if>
+    <if test="uid!=null ">
+      and to_days(sign_time) = to_days(now());
+    </if>
+  </select>
+
+</mapper>
